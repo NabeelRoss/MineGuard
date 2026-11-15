@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block title %}MineGuard AI - Safety Compliance Analytics{% endblock %}
+
+{% block head %}
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+
+    <!-- PAGE HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h3 class="fw-bold mb-1 text-white">Station Safety Analytics & Trends</h3>
+            <p class="text-secondary small mb-0">Quantitative inspection metrics, temporal trends, and PPE adherence patterns</p>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <button id="btnRefreshCharts" class="btn btn-sm btn-mg-outline d-flex align-items-center gap-1">
+                <i class="bi bi-arrow-clockwise"></i>
+                <span>Refresh Data</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- SUMMARY KPI STRIP (4 METRICS) -->
+    <div class="row g-3 mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="mg-card mg-kpi-card brand">
+                <div class="mg-kpi-label">Total Inspections</div>
+                <div class="mg-kpi-value text-warning" id="kpiTotalInspections">0</div>
+                <div class="mg-kpi-subtitle">Station throughput</div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="mg-card mg-kpi-card safe">
+                <div class="mg-kpi-label">Overall Compliance Rate</div>
+                <div class="mg-kpi-value text-success" id="kpiComplianceRate">100%</div>
+                <div class="mg-kpi-subtitle">Passed vs Total Verified</div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="mg-card mg-kpi-card cyan">
+                <div class="mg-kpi-label">Hardhat Adherence</div>
+                <div class="mg-kpi-value text-info" id="kpiHardhatRate">100%</div>
+                <div class="mg-kpi-subtitle">Head protection compliance</div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="mg-card mg-kpi-card violation">
+                <div class="mg-kpi-label">Safety Vest Adherence</div>
+                <div class="mg-kpi-value text-white" id="kpiVestRate">100%</div>
+                <div class="mg-kpi-subtitle">Torso visibility compliance</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHARTS ROW 1: TRENDS & DECISION BREAKDOWN -->
+    <div class="row g-4 mb-4">
+        <!-- 1. Daily Inspection Outcome Trend (Line Chart) -->
+        <div class="col-lg-8">
+            <div class="mg-card h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="fw-bold mb-0 text-white d-flex align-items-center gap-2">
+                        <i class="bi bi-graph-up text-warning"></i>
+                        <span>Daily Inspection Outcome Trend</span>
+                    </h6>
+                    <span class="badge bg-dark border border-secondary text-secondary">Historical Pass vs Fail</span>
+                </div>
+                <div style="height: 320px; position: relative;">
+                    <canvas id="chartDailyTrend"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Decision Distribution (Doughnut Chart) -->
+        <div class="col-lg-4">
+            <div class="mg-card h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="fw-bold mb-0 text-white d-flex align-items-center gap-2">
+                        <i class="bi bi-pie-chart-fill text-info"></i>
+                        <span>Decision Breakdown</span>
+                    </h6>
+                    <span class="badge bg-dark border border-secondary text-secondary">Proportions</span>
+                </div>
+                <div style="height: 320px; position: relative;">
+                    <canvas id="chartDecisionDist"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHARTS ROW 2: PPE DEFECTS & HOURLY LOAD -->
+    <div class="row g-4">
+        <!-- 3. PPE Defect Category Breakdown (Bar Chart) -->
+        <div class="col-lg-5">
+            <div class="mg-card h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="fw-bold mb-0 text-white d-flex align-items-center gap-2">
+                        <i class="bi bi-bar-chart-fill text-danger"></i>
+                        <span>PPE Non-Compliance Distribution</span>
+                    </h6>
+                    <span class="badge bg-dark border border-secondary text-secondary">Specific Defects</span>
+                </div>
+                <div style="height: 320px; position: relative;">
+                    <canvas id="chartPPEDefects"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Hourly Shift Load Distribution (Bar Chart) -->
+        <div class="col-lg-7">
+            <div class="mg-card h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="fw-bold mb-0 text-white d-flex align-items-center gap-2">
+                        <i class="bi bi-clock-fill text-cyan"></i>
+                        <span>Hourly Checkpoint Traffic & Violations</span>
+                    </h6>
+                    <span class="badge bg-dark border border-secondary text-secondary">24-Hour Shift Profile</span>
+                </div>
+                <div style="height: 320px; position: relative;">
+                    <canvas id="chartHourlyTraffic"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+{% endblock %}

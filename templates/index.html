@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block title %}MineGuard AI - Industrial PPE Quality Inspection Station{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+
+    <!-- PAGE HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h3 class="fw-bold mb-1 text-white">Underground PPE Checkpoint Station</h3>
+            <p class="text-secondary small mb-0">Fixed-Point Automated Quality Inspection | Assembly-Line Safety Enforcement</p>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <a href="/live" class="btn btn-sm btn-mg-primary d-flex align-items-center gap-2 px-3 py-2">
+                <i class="bi bi-camera-video-fill"></i>
+                <span class="fw-bold">Open Live Inspection Station</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- 6 KEY PERFORMANCE INDICATOR CARDS -->
+    <div class="row g-3 mb-4">
+        <!-- 1. Total Inspections -->
+        <div class="col-xl-2 col-md-4 col-sm-6">
+            <div class="mg-card mg-kpi-card brand">
+                <div class="mg-kpi-label">Total Inspected</div>
+                <div class="mg-kpi-value text-warning" id="kpiTotalInspections">0</div>
+                <div class="mg-kpi-subtitle">Station throughput</div>
+            </div>
+        </div>
+
+        <!-- 2. Passed Compliant -->
+        <div class="col-xl-2 col-md-4 col-sm-6">
+            <div class="mg-card mg-kpi-card safe">
+                <div class="mg-kpi-label">Passed Compliant</div>
+                <div class="mg-kpi-value text-success" id="kpiTotalPassed">0</div>
+                <div class="mg-kpi-subtitle">All PPE verified</div>
+            </div>
+        </div>
+
+        <!-- 3. Confirmed Violations -->
+        <div class="col-xl-2 col-md-4 col-sm-6">
+            <div class="mg-card mg-kpi-card violation">
+                <div class="mg-kpi-label">PPE Violations</div>
+                <div class="mg-kpi-value text-danger" id="kpiTotalViolations">0</div>
+                <div class="mg-kpi-subtitle">Entry denied</div>
+            </div>
+        </div>
+
+        <!-- 4. Re-inspections Required -->
+        <div class="col-xl-2 col-md-4 col-sm-6">
+            <div class="mg-card mg-kpi-card unknown">
+                <div class="mg-kpi-label">Re-inspections</div>
+                <div class="mg-kpi-value text-warning" id="kpiTotalReinspections">0</div>
+                <div class="mg-kpi-subtitle">Ambiguous / Occluded</div>
+            </div>
+        </div>
+
+        <!-- 5. Overall Compliance Rate -->
+        <div class="col-xl-2 col-md-4 col-sm-6">
+            <div class="mg-card mg-kpi-card safe">
+                <div class="mg-kpi-label">Compliance Rate</div>
+                <div class="mg-kpi-value text-success" id="kpiComplianceRate">100%</div>
+                <div class="mg-kpi-subtitle" id="kpiAdherenceSub">H: 100% | V: 100%</div>
+            </div>
+        </div>
+
+        <!-- 6. Average Dwell Time -->
+        <div class="col-xl-2 col-md-4 col-sm-6">
+            <div class="mg-card mg-kpi-card cyan">
+                <div class="mg-kpi-label">Avg Inspection Time</div>
+                <div class="mg-kpi-value text-cyan" id="kpiAvgDuration">0.0s</div>
+                <div class="mg-kpi-subtitle">Verification dwell</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- STATION LIVE STATUS & QUICK PREVIEW ROW -->
+    <div class="row g-4 mb-4">
+        <!-- Station Operational Status Card -->
+        <div class="col-lg-6">
+            <div class="mg-card h-100 d-flex flex-column justify-content-between">
+                <div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0 text-white d-flex align-items-center gap-2">
+                            <i class="bi bi-shield-check text-warning"></i>
+                            <span>Station #01 Operational Status</span>
+                        </h5>
+                        <span class="badge bg-dark border border-secondary text-cyan font-monospace" id="dashStationFps">0.0 FPS</span>
+                    </div>
+
+                    <div class="p-3 rounded bg-black border border-secondary mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="text-secondary small fw-bold">ACTIVE WORKER INSPECTION</div>
+                                <div class="fw-bold font-monospace text-warning fs-5 mt-1" id="dashCurrentRef">STANDBY - NO WORKER</div>
+                            </div>
+                            <span class="badge-idle" id="dashStatePill">IDLE</span>
+                        </div>
+                    </div>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <div class="p-2 rounded bg-dark border border-secondary small">
+                                <span class="text-secondary">AI Model:</span> <strong class="text-white">YOLO11n-PPE</strong>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-2 rounded bg-dark border border-secondary small">
+                                <span class="text-secondary">Inference:</span> <strong class="text-cyan" id="dashLatency">-- ms</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center pt-2 border-top border-secondary">
+                    <span class="text-muted small"><i class="bi bi-info-circle me-1"></i> Multi-frame consensus active</span>
+                    <a href="/live" class="btn btn-sm btn-mg-primary">Launch Full Screen Terminal &rarr;</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Station Mini Preview -->
+        <div class="col-lg-6">
+            <div class="mg-card h-100">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="fw-bold mb-0 text-white d-flex align-items-center gap-2">
+                        <i class="bi bi-camera-video text-cyan"></i>
+                        <span>Optical Video Stream Preview</span>
+                    </h5>
+                    <span class="badge bg-secondary small">Live Feed</span>
+                </div>
+
+                <div class="mg-video-wrapper" style="aspect-ratio: 16/9; max-height: 250px;">
+                    <img src="/video_feed" alt="MineGuard Feed" class="mg-video-stream">
+                    <div class="mg-video-overlay-badge">
+                        <span class="mg-status-dot pulse text-success"></span>
+                        <span>CHECKPOINT ACTIVE</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RECENT AUDIT INSPECTIONS TABLE -->
+    <div class="mg-card">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="d-flex align-items-center gap-2">
+                <h5 class="fw-bold mb-0 text-white">Recent Checkpoint Inspections</h5>
+                <span class="badge bg-dark border border-secondary text-secondary">Latest 10</span>
+            </div>
+            <a href="/history" class="text-warning small text-decoration-none">View Complete Audit Log &rarr;</a>
+        </div>
+
+        <div class="table-responsive">
+            <table class="mg-table" id="dashRecentTable">
+                <thead>
+                    <tr>
+                        <th>Reference ID</th>
+                        <th>Timestamp</th>
+                        <th>Outcome</th>
+                        <th>Hardhat</th>
+                        <th>Safety Vest</th>
+                        <th>Dwell Time</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody id="dashRecentTableBody">
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-4">
+                            <i class="bi bi-clipboard2-check fs-2 d-block mb-2 text-warning"></i>
+                            <div>Loading recent inspections...</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

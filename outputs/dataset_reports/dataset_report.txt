@@ -1,0 +1,50 @@
+======================================================================
+              MINEGUARD AI - DATASET VALIDATION REPORT
+======================================================================
+Dataset Root: C:\Users\nabee\Documents\PROJECTS\MineGuard\dataset\atharion-v1.0-public
+Classes Defined (3): {0: 'Person', 1: 'Hardhat', 2: 'Safety Vest'}
+
+----------------------------------------------------------------------
+SPLIT BREAKDOWN
+----------------------------------------------------------------------
+Split      Images   Labels   Objects    Missing    Empty    Corrupt  Invalid 
+----------------------------------------------------------------------
+train      791      791      3476       0          0        0        0       
+valid      170      170      994        0          0        0        0       
+test       169      169      885        0          0        0        0       
+----------------------------------------------------------------------
+TOTAL      1130     1130     5355       0          0        0        0       
+
+----------------------------------------------------------------------
+CLASS DISTRIBUTION
+----------------------------------------------------------------------
+Class ID   Class Name           Instances    Percentage
+----------------------------------------------------------------------
+0          Person               2002         37.39%
+1          Hardhat              1776         33.17%
+2          Safety Vest          1577         29.45%
+----------------------------------------------------------------------
+TOTAL      ALL CLASSES          5355         100.00%
+
+----------------------------------------------------------------------
+IMAGE RESOLUTIONS DETECTED
+----------------------------------------------------------------------
+Split [train]:
+  640x640: 780 images
+  1024x1024: 2 images
+  1024x681: 2 images
+  1024x683: 1 images
+  1024x677: 1 images
+Split [valid]:
+  640x640: 170 images
+Split [test]:
+  640x640: 169 images
+
+----------------------------------------------------------------------
+INTEGRITY STATUS & REMARKS
+----------------------------------------------------------------------
+Corrupted Images Detected: 0
+Invalid Bounding Boxes Detected: 0
+Background Images: Allowed by design (unannotated or empty label files).
+Integrity Verdict: PASS - READY FOR TRAINING
+======================================================================

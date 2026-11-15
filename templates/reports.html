@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block title %}MineGuard AI - Safety Compliance Reports{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+
+    <!-- PAGE HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h3 class="fw-bold mb-1 text-white">Periodic Safety Compliance Reports</h3>
+            <p class="text-secondary small mb-0">Underground Mine Shift Safety Audit & PPE Compliance Summaries</p>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <button id="btnPrintReport" class="btn btn-sm btn-mg-outline d-flex align-items-center gap-1">
+                <i class="bi bi-printer-fill text-info"></i>
+                <span>Print / PDF</span>
+            </button>
+            <button id="btnExportReportCsv" class="btn btn-sm btn-mg-primary d-flex align-items-center gap-1">
+                <i class="bi bi-download"></i>
+                <span>Download Report CSV</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- REPORT FILTER TOOLBAR -->
+    <div class="mg-card mb-4">
+        <form id="reportFilterForm" class="row g-2 align-items-end">
+            <div class="col-md-3 col-sm-6">
+                <label class="form-label text-secondary small fw-bold mb-1">Start Date</label>
+                <input type="date" class="form-control form-control-sm mg-input" id="reportDateFrom">
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <label class="form-label text-secondary small fw-bold mb-1">End Date</label>
+                <input type="date" class="form-control form-control-sm mg-input" id="reportDateTo">
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <label class="form-label text-secondary small fw-bold mb-1">Quick Presets</label>
+                <div class="btn-group btn-group-sm w-100" role="group">
+                    <button type="button" class="btn btn-mg-outline" id="presetToday">Today</button>
+                    <button type="button" class="btn btn-mg-outline" id="presetWeek">7 Days</button>
+                    <button type="button" class="btn btn-mg-outline" id="presetMonth">30 Days</button>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6 d-flex gap-2">
+                <button type="button" class="btn btn-sm btn-mg-primary flex-grow-1" id="btnGenerateReport">
+                    <i class="bi bi-bar-chart-steps me-1"></i> Generate Report
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- EXECUTIVE SUMMARY BANNER -->
+    <div class="mg-card mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold mb-0 text-white d-flex align-items-center gap-2">
+                <i class="bi bi-award-fill text-warning"></i>
+                <span>Executive Safety Audit Summary</span>
+            </h5>
+            <span class="badge bg-dark border border-secondary text-secondary" id="reportPeriodBadge">All Time</span>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="p-3 rounded bg-black border border-secondary text-center">
+                    <div class="text-secondary small fw-bold">TOTAL INSPECTED</div>
+                    <div class="fs-3 fw-bold text-white mt-1" id="repTotalInspected">0</div>
+                    <div class="text-muted small" style="font-size:0.7rem;">Checkpoint visits</div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="p-3 rounded bg-black border border-secondary text-center">
+                    <div class="text-secondary small fw-bold">COMPLIANCE RATIO</div>
+                    <div class="fs-3 fw-bold text-success mt-1" id="repComplianceRatio">100%</div>
+                    <div class="text-muted small" style="font-size:0.7rem;">Passed inspections</div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="p-3 rounded bg-black border border-secondary text-center">
+                    <div class="text-secondary small fw-bold">VIOLATIONS</div>
+                    <div class="fs-3 fw-bold text-danger mt-1" id="repTotalViolations">0</div>
+                    <div class="text-muted small" style="font-size:0.7rem;">Entry denied</div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="p-3 rounded bg-black border border-secondary text-center">
+                    <div class="text-secondary small fw-bold">RE-INSPECTIONS</div>
+                    <div class="fs-3 fw-bold text-warning mt-1" id="repTotalReinspections">0</div>
+                    <div class="text-muted small" style="font-size:0.7rem;">Occluded / Ambiguous</div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="p-3 rounded bg-black border border-secondary text-center">
+                    <div class="text-secondary small fw-bold">AVG DWELL TIME</div>
+                    <div class="fs-3 fw-bold text-cyan mt-1" id="repAvgDuration">0.0s</div>
+                    <div class="text-muted small" style="font-size:0.7rem;">Throughput speed</div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6">
+                <div class="p-3 rounded bg-black border border-secondary text-center">
+                    <div class="text-secondary small fw-bold">PRIMARY DEFECT</div>
+                    <div class="fs-5 fw-bold text-danger mt-2" id="repPrimaryDefect">None</div>
+                    <div class="text-muted small" style="font-size:0.7rem;">Most missed item</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DAILY BREAKDOWN TABLE CARD -->
+    <div class="mg-card">
+        <h5 class="fw-bold mb-3 text-white">Daily Operational Compliance Breakdown</h5>
+
+        <div class="table-responsive">
+            <table class="mg-table" id="reportDailyTable">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Total Inspected</th>
+                        <th>Passed</th>
+                        <th>Violations</th>
+                        <th>Re-inspected</th>
+                        <th>Compliance %</th>
+                        <th>Hardhat Defect</th>
+                        <th>Safety Vest Defect</th>
+                    </tr>
+                </thead>
+                <tbody id="reportDailyTableBody">
+                    <tr>
+                        <td colspan="8" class="text-center text-muted py-5">
+                            <i class="bi bi-file-earmark-bar-graph fs-2 d-block mb-2 text-warning"></i>
+                            <div>Loading report metrics...</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/reports.js') }}"></script>
+{% endblock %}

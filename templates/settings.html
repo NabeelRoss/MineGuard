@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block title %}MineGuard AI - System Settings & Hardware Health{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+
+    <!-- PAGE HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h3 class="fw-bold mb-1 text-white">System Configuration & Station Health</h3>
+            <p class="text-secondary small mb-0">Hardware telemetry, per-class thresholds, consensus parameters, and database controls</p>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-dark border border-secondary text-cyan px-3 py-2" id="healthPollingBadge">
+                <i class="bi bi-activity me-1"></i> Live Hardware Telemetry
+            </span>
+        </div>
+    </div>
+
+    <!-- ROW 1: LIVE HARDWARE HEALTH MONITOR -->
+    <div class="mg-card mb-4">
+        <h5 class="fw-bold text-white mb-3 d-flex align-items-center gap-2">
+            <i class="bi bi-cpu-fill text-warning"></i>
+            <span>Hardware & AI Engine Health</span>
+        </h5>
+
+        <div class="row g-3">
+            <!-- 1. Compute Device -->
+            <div class="col-xl-3 col-md-6">
+                <div class="p-3 rounded bg-black border border-secondary">
+                    <div class="text-secondary small fw-bold">COMPUTE DEVICE</div>
+                    <div class="fs-5 fw-bold text-warning mt-1 text-truncate" id="healthDevice">--</div>
+                    <div class="text-muted small" id="healthCudaVer">CUDA: --</div>
+                </div>
+            </div>
+
+            <!-- 2. Inference Latency & FPS -->
+            <div class="col-xl-3 col-md-6">
+                <div class="p-3 rounded bg-black border border-secondary">
+                    <div class="text-secondary small fw-bold">INFERENCE SPEED</div>
+                    <div class="fs-5 fw-bold text-cyan mt-1" id="healthLatency">-- ms / frame</div>
+                    <div class="text-muted small" id="healthFps">Station FPS: --</div>
+                </div>
+            </div>
+
+            <!-- 3. GPU VRAM Memory -->
+            <div class="col-xl-3 col-md-6">
+                <div class="p-3 rounded bg-black border border-secondary">
+                    <div class="text-secondary small fw-bold">GPU MEMORY USAGE</div>
+                    <div class="fs-5 fw-bold text-success mt-1" id="healthGpuMem">-- MB Allocated</div>
+                    <div class="text-muted small" id="healthGpuReserved">Reserved: -- MB</div>
+                </div>
+            </div>
+
+            <!-- 4. Database & Camera -->
+            <div class="col-xl-3 col-md-6">
+                <div class="p-3 rounded bg-black border border-secondary">
+                    <div class="text-secondary small fw-bold">STORAGE & DRIVER</div>
+                    <div class="fs-5 fw-bold text-white mt-1" id="healthDbSize">DB: -- KB</div>
+                    <div class="text-muted small" id="healthCamDriver">Driver: --</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ROW 2: CONFIGURATION FORMS -->
+    <div class="row g-4 mb-4">
+        <!-- LEFT: PER-CLASS THRESHOLDS & CAMERA -->
+        <div class="col-lg-6">
+            <div class="mg-card h-100">
+                <h5 class="fw-bold text-white mb-3 d-flex align-items-center gap-2">
+                    <i class="bi bi-camera-fill text-cyan"></i>
+                    <span>Camera & Detection Parameters</span>
+                </h5>
+
+                <form id="detectionSettingsForm">
+                    <div class="mb-3">
+                        <label class="form-label text-secondary small fw-bold">Camera Feed Source</label>
+                        <input type="text" class="form-control mg-input" id="cfgCameraSource" placeholder="0 (Webcam) or http://... (RTSP/MJPEG)">
+                        <div class="form-text text-muted small">Enter 0 for built-in webcam or RTSP/HTTP URL for IP/ESP32-CAM.</div>
+                    </div>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-4">
+                            <label class="form-label text-secondary small fw-bold">Conf: Person</label>
+                            <input type="number" step="0.01" min="0.10" max="0.95" class="form-control mg-input" id="cfgConfPerson">
+                        </div>
+                        <div class="col-4">
+                            <label class="form-label text-secondary small fw-bold">Conf: Hardhat</label>
+                            <input type="number" step="0.01" min="0.10" max="0.95" class="form-control mg-input" id="cfgConfHardhat">
+                        </div>
+                        <div class="col-4">
+                            <label class="form-label text-secondary small fw-bold">Conf: Vest</label>
+                            <input type="number" step="0.01" min="0.10" max="0.95" class="form-control mg-input" id="cfgConfVest">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-secondary small fw-bold">NMS IoU Overlap Threshold</label>
+                        <input type="number" step="0.05" min="0.10" max="0.90" class="form-control mg-input" id="cfgIoU">
+                        <div class="form-text text-muted small">Suppression threshold for bounding box clustering.</div>
+                    </div>
+
+                    <button type="button" class="btn btn-sm btn-mg-primary" id="btnSaveDetectionSettings">
+                        <i class="bi bi-check-circle me-1"></i> Save Detection Settings
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- RIGHT: CHECKPOINT CONSENSUS ENGINE RULES -->
+        <div class="col-lg-6">
+            <div class="mg-card h-100">
+                <h5 class="fw-bold text-white mb-3 d-flex align-items-center gap-2">
+                    <i class="bi bi-shield-lock-fill text-warning"></i>
+                    <span>Checkpoint Consensus Rules</span>
+                </h5>
+
+                <form id="consensusSettingsForm">
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="form-label text-secondary small fw-bold">Required Safe Frames</label>
+                            <input type="number" min="1" max="20" class="form-control mg-input" id="cfgSafeFrames">
+                            <div class="form-text text-muted small">Consecutive frames required to clear entry (PASS).</div>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label text-secondary small fw-bold">Required Fail Frames</label>
+                            <input type="number" min="1" max="30" class="form-control mg-input" id="cfgFailFrames">
+                            <div class="form-text text-muted small">Consecutive frames to confirm violation (FAIL).</div>
+                        </div>
+                    </div>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="form-label text-secondary small fw-bold">Station Timeout (sec)</label>
+                            <input type="number" step="0.5" min="3.0" max="60.0" class="form-control mg-input" id="cfgTimeout">
+                            <div class="form-text text-muted small">Max dwell time before REINSPECT triggers.</div>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label text-secondary small fw-bold">Departure Cooldown (sec)</label>
+                            <input type="number" step="0.5" min="1.0" max="15.0" class="form-control mg-input" id="cfgCooldown">
+                            <div class="form-text text-muted small">Pause before next worker may be inspected.</div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-sm btn-mg-primary" id="btnSaveConsensusSettings">
+                        <i class="bi bi-check-circle me-1"></i> Save Consensus Rules
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ROW 3: DATABASE AUDIT & DANGER ZONE -->
+    <div class="mg-card border-danger">
+        <h5 class="fw-bold text-danger mb-2 d-flex align-items-center gap-2">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <span>Database Maintenance & Storage Management</span>
+        </h5>
+        <p class="text-secondary small mb-3">
+            Safely clear historical inspection and violation tables. Deep Learning models, weights, and training datasets are strictly protected and never modified.
+        </p>
+
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+            <button class="btn btn-sm btn-mg-outline text-warning" id="btnClearInspectionsBtn">
+                <i class="bi bi-clipboard-x me-1"></i> Clear Inspection History
+            </button>
+            <button class="btn btn-sm btn-mg-outline text-danger" id="btnClearViolationsBtn">
+                <i class="bi bi-shield-x me-1"></i> Clear Violation Snapshots
+            </button>
+            <button class="btn btn-sm btn-mg-danger" id="btnClearAllHistoryBtn">
+                <i class="bi bi-trash3-fill me-1"></i> Clear All Station History
+            </button>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/settings.js') }}"></script>
+{% endblock %}

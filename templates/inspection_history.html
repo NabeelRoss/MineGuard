@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+
+{% block title %}MineGuard AI - Checkpoint Inspection History{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+
+    <!-- PAGE HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h3 class="fw-bold mb-1 text-white">Inspection Audit History</h3>
+            <p class="text-secondary small mb-0">Immutable record of all quality inspections at Station #01</p>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <button id="btnExportCsv" class="btn btn-sm btn-mg-outline d-flex align-items-center gap-1">
+                <i class="bi bi-download text-warning"></i>
+                <span>Export CSV</span>
+            </button>
+            <button id="btnRefreshHistory" class="btn btn-sm btn-mg-outline d-flex align-items-center gap-1">
+                <i class="bi bi-arrow-clockwise"></i>
+                <span>Refresh</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- FILTER TOOLBAR -->
+    <div class="mg-card mb-4">
+        <form id="historyFilterForm" class="row g-2 align-items-end">
+            <!-- Search Reference ID -->
+            <div class="col-lg-3 col-md-6">
+                <label class="form-label text-secondary small fw-bold mb-1">Search Reference ID</label>
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text bg-dark border-secondary text-secondary"><i class="bi bi-search"></i></span>
+                    <input type="text" class="form-control mg-input" id="searchRef" placeholder="e.g. INSP-20261115...">
+                </div>
+            </div>
+
+            <!-- Decision Filter -->
+            <div class="col-lg-2 col-md-3 col-sm-6">
+                <label class="form-label text-secondary small fw-bold mb-1">Decision Outcome</label>
+                <select class="form-select form-select-sm mg-input" id="filterDecision">
+                    <option value="ALL">All Outcomes</option>
+                    <option value="PASS">PASS (Compliant)</option>
+                    <option value="FAIL">FAIL (Violation)</option>
+                    <option value="REINSPECT">REINSPECT (Occluded)</option>
+                </select>
+            </div>
+
+            <!-- Date From -->
+            <div class="col-lg-2 col-md-3 col-sm-6">
+                <label class="form-label text-secondary small fw-bold mb-1">From Date</label>
+                <input type="date" class="form-control form-control-sm mg-input" id="filterDateFrom">
+            </div>
+
+            <!-- Date To -->
+            <div class="col-lg-2 col-md-3 col-sm-6">
+                <label class="form-label text-secondary small fw-bold mb-1">To Date</label>
+                <input type="date" class="form-control form-control-sm mg-input" id="filterDateTo">
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="col-lg-3 col-md-6 d-flex gap-2">
+                <button type="button" class="btn btn-sm btn-mg-primary flex-grow-1" id="btnApplyFilter">
+                    <i class="bi bi-funnel-fill me-1"></i> Apply Filter
+                </button>
+                <button type="button" class="btn btn-sm btn-mg-outline" id="btnResetFilter" title="Reset Filters">
+                    <i class="bi bi-x-circle"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- INSPECTION TABLE CARD -->
+    <div class="mg-card">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="d-flex align-items-center gap-2">
+                <h5 class="fw-bold mb-0 text-white">Logged Inspections</h5>
+                <span class="badge bg-dark border border-secondary text-secondary" id="totalRecordsBadge">0 Records</span>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <div class="d-flex align-items-center gap-1">
+                    <span class="text-secondary small">Show:</span>
+                    <select class="form-select form-select-sm mg-input py-0 px-2" id="perPageSelect" style="width: 70px;">
+                        <option value="10">10</option>
+                        <option value="25" selected>25</option>
+                        <option value="50">50</option>
+                    </select>
+                </div>
+                <div class="text-secondary small" id="paginationInfo">Page 1 of 1</div>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="mg-table" id="historyTable">
+                <thead>
+                    <tr>
+                        <th>Reference ID</th>
+                        <th>Timestamp</th>
+                        <th>Decision</th>
+                        <th>Hardhat</th>
+                        <th>Safety Vest</th>
+                        <th>Duration / Frames</th>
+                        <th>Notes / Reason</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="historyTableBody">
+                    <tr>
+                        <td colspan="8" class="text-center text-muted py-5">
+                            <i class="bi bi-clipboard2-check fs-2 d-block mb-2 text-warning"></i>
+                            <div>Loading inspection history...</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- PAGINATION CONTROLS -->
+        <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top border-secondary">
+            <button class="btn btn-sm btn-mg-outline" id="btnPrevPage" disabled>
+                <i class="bi bi-chevron-left me-1"></i> Previous
+            </button>
+            <span class="small text-secondary" id="pageNumberDisplay">Page 1</span>
+            <button class="btn btn-sm btn-mg-outline" id="btnNextPage" disabled>
+                Next <i class="bi bi-chevron-right ms-1"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- INSPECTION DETAILS & EVIDENCE MODAL -->
+<div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content mg-modal">
+            <div class="modal-header mg-modal-header">
+                <h5 class="modal-title d-flex align-items-center gap-2" id="detailsModalLabel">
+                    <i class="bi bi-file-earmark-medical-fill text-warning"></i>
+                    <span>Inspection Audit Details</span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <!-- Header Info Row -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <div class="p-3 rounded bg-black border border-secondary">
+                            <div class="text-muted small">INSPECTION REFERENCE</div>
+                            <div class="fw-bold font-monospace text-warning fs-5" id="modalRefId">--</div>
+                            <div class="text-secondary small mt-1" id="modalTimestamp">--</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 rounded bg-black border border-secondary d-flex flex-column justify-content-center">
+                            <div class="text-muted small">OVERALL OUTCOME</div>
+                            <div id="modalDecisionBadge" class="mt-1">--</div>
+                            <div class="text-muted small mt-1" id="modalDurationFrames">--</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Consensus Breakdown -->
+                <h6 class="fw-bold text-white mb-2 small text-uppercase" style="letter-spacing:0.05em;">PPE Verification Breakdown</h6>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <div class="p-3 rounded" style="background-color: var(--bg-card); border: 1px solid var(--border-subtle);">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="fw-bold text-white small"><i class="bi bi-shield-fill text-warning me-1"></i> Hardhat</span>
+                                <span id="modalHardhatPill">--</span>
+                            </div>
+                            <div class="small text-secondary">Confidence: <strong class="text-white" id="modalHardhatConf">0%</strong></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 rounded" style="background-color: var(--bg-card); border: 1px solid var(--border-subtle);">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="fw-bold text-white small"><i class="bi bi-person-badge-fill text-info me-1"></i> Safety Vest</span>
+                                <span id="modalVestPill">--</span>
+                            </div>
+                            <div class="small text-secondary">Confidence: <strong class="text-white" id="modalVestConf">0%</strong></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notes / Reason -->
+                <div class="mb-4">
+                    <label class="form-label text-secondary small fw-bold">Inspection Audit Notes</label>
+                    <div class="p-2 rounded bg-dark border border-secondary text-white small" id="modalNotes">--</div>
+                </div>
+
+                <!-- Dual Evidence Images (if violation) -->
+                <div id="modalEvidenceSection" style="display: none;">
+                    <h6 class="fw-bold text-danger mb-2 small text-uppercase" style="letter-spacing:0.05em;">
+                        <i class="bi bi-camera-fill me-1"></i> Violation Evidence Capture
+                    </h6>
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <div class="mg-evidence-frame text-center p-1">
+                                <span class="mg-evidence-label">ANNOTATED DETECTION</span>
+                                <img id="modalAnnotatedImg" src="" alt="Annotated Detection" class="img-fluid rounded" style="max-height: 260px; object-fit: contain;">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mg-evidence-frame text-center p-1">
+                                <span class="mg-evidence-label">ORIGINAL SENSOR CAPTURE</span>
+                                <img id="modalOriginalImg" src="" alt="Original Raw Frame" class="img-fluid rounded" style="max-height: 260px; object-fit: contain;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer mg-modal-footer">
+                <button type="button" class="btn btn-sm btn-mg-outline" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/history.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block title %}MineGuard AI - Live Checkpoint Inspection{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+
+    <!-- TOP HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <div>
+            <div class="d-flex align-items-center gap-2">
+                <span class="mg-zone-indicator">
+                    <i class="bi bi-geo-alt-fill"></i> Checkpoint Station #01
+                </span>
+                <h3 class="fw-bold mb-0 text-white">Live PPE Quality Inspection</h3>
+            </div>
+            <p class="text-secondary small mb-0 mt-1">Automated Fixed-Point Assembly Line Inspection | Strict 1-Worker Policy</p>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-dark border border-secondary text-secondary px-3 py-2" id="checkpointStateBadge">
+                <span class="mg-status-dot me-1"></span> State: IDLE
+            </span>
+        </div>
+    </div>
+
+    <!-- MAIN TWO-COLUMN SPLIT: 68% VIDEO / 32% INSPECTION PANEL -->
+    <div class="row g-3">
+        <!-- LEFT: VIDEO FEED & STATION CONTROLS (68%) -->
+        <div class="col-xl-8 col-lg-7">
+            <div class="mg-card h-100 d-flex flex-column">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-camera-video-fill text-warning"></i>
+                        <span class="fw-bold text-white">Station Optical Feed</span>
+                        <span class="badge bg-secondary small" id="camSourceBadge">Source: Default</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-dark border border-secondary text-cyan small" id="videoResolutionBadge">HD Feed</span>
+                    </div>
+                </div>
+
+                <!-- Video Frame Container -->
+                <div class="mg-video-wrapper flex-grow-1 position-relative" style="min-height: 480px;">
+                    <img src="/video_feed" alt="MineGuard Checkpoint Stream" class="mg-video-stream" id="videoFeed">
+
+                    <!-- Overlays -->
+                    <div class="mg-video-overlay-badge" id="videoOverlayStatus">
+                        <span class="mg-status-dot" id="videoStatusDot"></span>
+                        <span id="videoStatusText">INITIALIZING</span>
+                    </div>
+                    <div class="mg-video-overlay-fps" id="videoOverlayFps">0.0 FPS</div>
+                </div>
+
+                <!-- Controls Strip -->
+                <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top border-secondary flex-wrap gap-2">
+                    <div class="d-flex align-items-center gap-2">
+                        <button class="btn btn-sm btn-mg-primary d-flex align-items-center gap-1" id="btnStartMonitoring">
+                            <i class="bi bi-play-fill"></i> Start Inspection
+                        </button>
+                        <button class="btn btn-sm btn-mg-danger d-flex align-items-center gap-1" id="btnStopMonitoring">
+                            <i class="bi bi-stop-fill"></i> Stop Station
+                        </button>
+                        <button class="btn btn-sm btn-mg-outline d-flex align-items-center gap-1" id="btnReconnectCam">
+                            <i class="bi bi-arrow-repeat"></i> Reconnect
+                        </button>
+                    </div>
+                    <div class="text-secondary small">
+                        <i class="bi bi-info-circle me-1"></i> Zone Box: <span class="text-warning">X:15-85% | Y:5-98%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT: LIVE INSPECTION STATUS PANEL (32%) -->
+        <div class="col-xl-4 col-lg-5">
+            <div class="d-flex flex-column gap-3">
+
+                <!-- 1. ACTIVE INSPECTION REFERENCE & STATE CARD -->
+                <div class="mg-card">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-secondary small fw-bold text-uppercase" style="letter-spacing:0.05em;">Current Inspection</span>
+                        <span class="badge-idle" id="liveStatePill">IDLE</span>
+                    </div>
+
+                    <div class="p-2 rounded bg-black border border-secondary mb-3 d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="text-muted small" style="font-size:0.7rem;">REFERENCE ID</div>
+                            <div class="fw-bold font-monospace text-warning" id="liveRefId">STANDBY - NO WORKER</div>
+                        </div>
+                        <span class="badge bg-dark border border-secondary text-info small" id="liveTimer">0.0s</span>
+                    </div>
+
+                    <!-- BIG TERMINAL DECISION BANNER -->
+                    <div class="mg-decision-banner" id="liveDecisionBanner">
+                        <div class="mg-decision-title text-secondary" id="liveDecisionTitle">READY</div>
+                        <div class="mg-decision-sub" id="liveDecisionSub">Awaiting worker to step into checkpoint zone</div>
+                    </div>
+                </div>
+
+                <!-- 2. REAL-TIME PPE CONSENSUS CARDS -->
+                <div class="mg-card">
+                    <h6 class="fw-bold text-white mb-3 d-flex align-items-center gap-2">
+                        <i class="bi bi-shield-check text-cyan"></i>
+                        <span>PPE Consensus Verification</span>
+                    </h6>
+
+                    <!-- Hardhat / Helmet -->
+                    <div class="mb-3 p-2 rounded" style="background-color: var(--bg-card); border: 1px solid var(--border-subtle);">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="fw-bold small text-white">
+                                <i class="bi bi-shield-fill text-warning me-1"></i> Hardhat / Helmet
+                            </span>
+                            <span class="badge bg-secondary small" id="liveHardhatStatus">UNKNOWN</span>
+                        </div>
+                        <div class="d-flex justify-content-between text-secondary small mb-1" style="font-size:0.75rem;">
+                            <span>Consensus Confidence: <strong class="text-white" id="liveHardhatConf">0%</strong></span>
+                            <span>Frames: <strong class="text-white" id="liveHardhatFrames">0</strong></span>
+                        </div>
+                        <div class="mg-progress">
+                            <div class="mg-progress-bar brand" id="liveHardhatBar" style="width: 0%;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Safety Vest -->
+                    <div class="p-2 rounded" style="background-color: var(--bg-card); border: 1px solid var(--border-subtle);">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="fw-bold small text-white">
+                                <i class="bi bi-person-badge-fill text-info me-1"></i> Safety Vest
+                            </span>
+                            <span class="badge bg-secondary small" id="liveVestStatus">UNKNOWN</span>
+                        </div>
+                        <div class="d-flex justify-content-between text-secondary small mb-1" style="font-size:0.75rem;">
+                            <span>Consensus Confidence: <strong class="text-white" id="liveVestConf">0%</strong></span>
+                            <span>Frames: <strong class="text-white" id="liveVestFrames">0</strong></span>
+                        </div>
+                        <div class="mg-progress">
+                            <div class="mg-progress-bar cyan" id="liveVestBar" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. RECENT CHECKPOINT AUDIT LOG (LAST 5) -->
+                <div class="mg-card">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h6 class="fw-bold text-white mb-0 small text-uppercase" style="letter-spacing:0.05em;">
+                            <i class="bi bi-clock-history me-1 text-secondary"></i> Recent Station Passes
+                        </h6>
+                        <a href="/history" class="text-warning small text-decoration-none">Full Audit &rarr;</a>
+                    </div>
+                    <div id="recentInspectionsList" class="d-flex flex-column gap-2">
+                        <div class="text-muted small text-center py-3">No recent inspections recorded</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/live_inspection.js') }}"></script>
+{% endblock %}

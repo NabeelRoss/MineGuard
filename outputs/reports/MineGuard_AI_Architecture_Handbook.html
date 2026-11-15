@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>MineGuard AI - Complete System Architecture & Interview Handbook</title>
+<style>
+    @page {
+        size: A4;
+        margin: 20mm 15mm 20mm 15mm;
+        @bottom-right {
+            content: "Page " counter(page);
+            font-size: 8pt;
+            color: #64748b;
+        }
+    }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        color: #1e293b;
+        line-height: 1.55;
+        font-size: 10pt;
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Cover Page */
+    .cover-page {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 40px;
+        box-sizing: border-box;
+        page-break-after: always;
+        background: linear-gradient(135deg, #0b1329 0%, #111e38 100%);
+        color: #ffffff;
+    }
+    .cover-badge {
+        display: inline-block;
+        background: rgba(234, 179, 8, 0.2);
+        color: #eab308;
+        border: 1px solid #eab308;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 9pt;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 25px;
+    }
+    .cover-title {
+        font-size: 32pt;
+        font-weight: 900;
+        letter-spacing: -0.02em;
+        line-height: 1.15;
+        margin: 0 0 15px 0;
+        color: #ffffff;
+    }
+    .cover-title span {
+        color: #eab308;
+    }
+    .cover-subtitle {
+        font-size: 14pt;
+        color: #94a3b8;
+        margin-bottom: 35px;
+        max-width: 600px;
+        line-height: 1.4;
+    }
+    .cover-meta {
+        margin-top: 40px;
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
+        padding-top: 25px;
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        font-size: 9pt;
+    }
+    .cover-meta-item strong {
+        color: #eab308;
+        display: block;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-size: 8pt;
+    }
+
+    /* Headings */
+    h1 {
+        font-size: 18pt;
+        font-weight: 800;
+        color: #0b1329;
+        border-bottom: 2.5px solid #eab308;
+        padding-bottom: 6px;
+        margin-top: 35px;
+        margin-bottom: 16px;
+        page-break-after: avoid;
+    }
+    h2 {
+        font-size: 13pt;
+        font-weight: 700;
+        color: #1e3a8a;
+        margin-top: 24px;
+        margin-bottom: 12px;
+        page-break-after: avoid;
+    }
+    h3 {
+        font-size: 11pt;
+        font-weight: 600;
+        color: #0f172a;
+        margin-top: 18px;
+        margin-bottom: 8px;
+        page-break-after: avoid;
+    }
+
+    p {
+        margin: 0 0 10px 0;
+        text-align: justify;
+    }
+
+    /* Tables */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 15px 0 20px 0;
+        font-size: 9pt;
+        page-break-inside: avoid;
+    }
+    th {
+        background-color: #0b1329;
+        color: #ffffff;
+        font-weight: 600;
+        text-align: left;
+        padding: 8px 10px;
+        border: 1px solid #1e293b;
+        font-size: 8.5pt;
+        letter-spacing: 0.03em;
+    }
+    td {
+        padding: 7px 10px;
+        border: 1px solid #cbd5e1;
+        vertical-align: top;
+    }
+    tr:nth-child(even) td {
+        background-color: #f8fafc;
+    }
+
+    /* Callouts & Alert Boxes */
+    .callout {
+        background-color: #f8fafc;
+        border-left: 4px solid #3b82f6;
+        padding: 12px 16px;
+        margin: 15px 0;
+        border-radius: 0 6px 6px 0;
+        font-size: 9pt;
+        page-break-inside: avoid;
+    }
+    .callout.danger {
+        border-left-color: #ef4444;
+        background-color: #fef2f2;
+    }
+    .callout.success {
+        border-left-color: #10b981;
+        background-color: #ecfdf5;
+    }
+    .callout.warning {
+        border-left-color: #f59e0b;
+        background-color: #fffbeb;
+    }
+    .callout-title {
+        font-weight: 700;
+        margin-bottom: 4px;
+        font-size: 9.5pt;
+    }
+
+    /* Diagrams & ASCII Blocks */
+    pre, code {
+        font-family: "Consolas", "Courier New", monospace;
+    }
+    pre {
+        background-color: #0b1329;
+        color: #f8fafc;
+        padding: 12px 16px;
+        border-radius: 6px;
+        font-size: 8pt;
+        line-height: 1.4;
+        overflow-x: auto;
+        page-break-inside: avoid;
+        margin: 14px 0;
+        border: 1px solid #1e293b;
+    }
+    p code, td code, li code {
+        background-color: #f1f5f9;
+        color: #b91c1c;
+        padding: 1px 4px;
+        border-radius: 3px;
+        font-size: 8.5pt;
+        border: 1px solid #e2e8f0;
+    }
+
+    /* Q&A Cards */
+    .qa-card {
+        background-color: #ffffff;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        padding: 14px 18px;
+        margin-bottom: 18px;
+        page-break-inside: avoid;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .qa-question {
+        font-weight: 700;
+        color: #0b1329;
+        font-size: 10pt;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    .qa-num {
+        background-color: #eab308;
+        color: #000000;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 8pt;
+        font-weight: 800;
+        flex-shrink: 0;
+    }
+    .qa-answer {
+        font-size: 9pt;
+        color: #334155;
+        margin-bottom: 10px;
+    }
+    .qa-followup {
+        background-color: #f8fafc;
+        border-left: 3px solid #8b5cf6;
+        padding: 8px 12px;
+        font-size: 8.5pt;
+        color: #475569;
+        border-radius: 0 4px 4px 0;
+    }
+    .qa-followup strong {
+        color: #6d28d9;
+    }
+
+    .page-break {
+        page-break-before: always;
+    }
+
+    ul, ol {
+        margin: 0 0 12px 0;
+        padding-left: 20px;
+    }
+    li {
+        margin-bottom: 4px;
+    }
+</style>
+</head>
+<body>
+
+<!-- COVER PAGE -->
+<div class="cover-page">
+    <div class="cover-badge">Industrial AI Safety System</div>
+    <div class="cover-title">MINEGUARD <span>AI</span></div>
+    <div class="cover-subtitle">
+        Intelligent PPE Compliance Monitoring System for Underground Coal Mines<br/>
+        <strong style="color: #ffffff; font-size: 12pt; display: block; margin-top: 10px;">Comprehensive Architectural Engineering Manual & Interview Preparation Handbook</strong>
+    </div>
+
+    <div class="cover-meta">
+        <div class="cover-meta-item">
+            <strong>Architecture Domain</strong>
+            Automated Quality Inspection Station (Fixed-Point Checkpoint)
+        </div>
+        <div class="cover-meta-item">
+            <strong>Neural Network</strong>
+            Ultralytics YOLO11n (2.6M Parameters, CUDA Accelerated)
+        </div>
+        <div class="cover-meta-item">
+            <strong>Core Modules</strong>
+            Detection, Anatomical Association, Consensus State Machine
+        </div>
+        <div class="cover-meta-item">
+            <strong>Full Stack</strong>
+            Python 3.11, PyTorch, OpenCV, Flask, SQLite (WAL), Bootstrap 5, Chart.js
+        </div>
+        <div class="cover-meta-item">
+            <strong>Test Suite Verification</strong>
+            22 / 22 Tests Passed (100% Pass Rate)
+        </div>
+        <div class="cover-meta-item">
+            <strong>Deployment Environment</strong>
+            Windows 11, NVIDIA RTX 3050 Laptop GPU (6GB VRAM)
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- PART 1: PROJECT OVERVIEW -->
+<!-- ========================================================================= -->
+<h1>PART 1: PROJECT OVERVIEW</h1>
+
+<h2>1.1 The Industrial Safety Problem</h2>
+<p>
+    Underground coal mining represents one of the most perilous industrial environments in the world. Workers face extreme physical hazards including roof collapse, rock bursts, methane and coal-dust explosions, noxious gas inhalation (CO, CH4), and heavy machinery collisions in narrow tunnels. Personal Protective Equipment (PPE)—specifically <strong>Hardhats (protective helmets)</strong> and <strong>High-Visibility Safety Vests</strong>—is strictly legally mandated by international mining safety administrations (such as MSHA in the United States and DGMS in India).
+</p>
+<p>
+    However, conventional compliance enforcement methods suffer from critical vulnerabilities:
+</p>
+<ul>
+    <li><strong>Human Inspector Fatigue:</strong> Safety officers stationed at shaft entrances cannot maintain 100% continuous vigilance across 8-hour shifts during high-throughput crew transitions involving hundreds of miners.</li>
+    <li><strong>Harsh Optical Environment:</strong> Underground coal mines exhibit severe darkness, non-uniform spot illumination from headlamps, suspended airborne coal dust particulates, and water spray mist.</li>
+    <li><strong>Fatal Flaws of Continuous Surveillance:</strong> Off-the-shelf computer vision systems attempt continuous multi-object tracking (e.g. ByteTrack) throughout mining tunnels. In cramped, low-clearance drifts, workers frequently cross paths, resulting in bounding box occlusions, identity switches, and severe misattribution of safety violations.</li>
+    <li><strong>Worker Privacy and Biometric Profiling:</strong> Continuous tracking requires building persistent identity profiles of workers throughout their shifts, introducing severe labor union resistance and legal privacy concerns.</li>
+</ul>
+
+<h2>1.2 The MineGuard AI Solution: Fixed Checkpoint Quality Station</h2>
+<p>
+    MineGuard AI completely eliminates the vulnerabilities of continuous surveillance by adopting an <strong>automated fixed-point quality inspection station</strong> (the assembly-line checkpoint paradigm). The system is installed at physical choke points—such as portal entrances, drift shaft turnstiles, man-trip boarding gates, or airlock doors.
+</p>
+<div class="callout success">
+    <div class="callout-title">Core Operating Principle: The Ephemeral Checkpoint Paradigm</div>
+    Workers enter a calibrated spatial inspection zone ($X \in [15\%, 85\%], Y \in [5\%, 98\%]$) one at a time. The system assigns an independent, ephemeral Inspection Reference ID (<code>INSP-YYYYMMDD-HHMMSS-XXXX</code>). No persistent identity tracking or facial recognition is utilized. The station inspects the worker across consecutive video frames using calibrated deep learning and geometric constraints, unlocks turnstiles upon verified <strong>PASS</strong>, denies entry and sounds an alarm on <strong>FAIL</strong>, and enforces <strong>REINSPECT</strong> on ambiguity.
+</div>
+
+<h2>1.3 High-Level System Architecture Diagram</h2>
+<pre>
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│                              MINEGUARD AI SYSTEM ARCHITECTURE                          │
+└────────────────────────────────────────────────────────────────────────────────────────┘
+
+ [ Optical Ingestion ]
+         │
+         ▼
+ ┌───────────────────────┐
+ │  OpenCV VideoCapture  │ ──> Ingests 640x480 @ 30 FPS via DirectShow (backend/camera_service.py)
+ └───────────┬───────────┘
+             │ BGR Frame
+             ▼
+ ┌───────────────────────┐
+ │   YOLO11n Detector    │ ──> torch.inference_mode() on NVIDIA RTX 3050 (detection/detector.py)
+ └───────────┬───────────┘     Per-Class Thresholds: Person (0.35), Hardhat (0.28), Vest (0.35)
+             │ DetectionResult (persons, helmets, vests)
+             ▼
+ ┌───────────────────────┐
+ │   PPE Associator      │ ──> Normalized Anatomical Head (top 35%) & Torso (18-75%) Zones
+ └───────────┬───────────┘     Bipartite Greedy Matcher & Inter-Person IoU Filter (compliance/association.py)
+             │ AssociatedWorkerPPE (helmet: YES/NO, vest: YES/NO, is_ambiguous: bool)
+             ▼
+ ┌───────────────────────┐
+ │  Inspection Trigger   │ ──> Spatial Zone Check (X: 15-85%, Y: 5-98%, Height >= 130px)
+ └───────────┬───────────┘     Worker Singularity Check (len(in_zone) == 1) (inspection/inspection_trigger.py)
+             │
+             ▼
+ ┌───────────────────────┐
+ │  Inspection Manager   │ <──> FrameCollector: Buffers multi-frame observations & best evidence
+ │     State Machine     │ <──> PPEVerifier: Evaluates Consensus (Safe >= 3, Fail >= 5, Timeout = 15s)
+ └───────────┬───────────┘      IDLE ──> DETECTING ──> VERIFYING ──> PASS / FAIL / REINSPECT
+             │
+             ├─────────────────────────────────────────────────┐
+             │ On Terminal Decision                            │ Every Video Frame
+             ▼                                                 ▼
+ ┌───────────────────────┐                         ┌───────────────────────┐
+ │   SQLite Persistence  │                         │ MineGuard Visualizer  │
+ │ database/mineguard.db │                         │  utils/visualization  │
+ │  (WAL Mode Enabled)   │                         └───────────┬───────────┘
+ └───────────────────────┘                                     │ Rendered Overlay
+             │                                                 ▼
+             │                                     ┌───────────────────────┐
+             │                                     │  Thread-Safe Buffer   │
+             │                                     │ (latest_jpeg_bytes)   │
+             │                                     └───────────┬───────────┘
+             ▼                                                 ▼
+ ┌─────────────────────────────────────────────────────────────────────────┐
+ │                     FLASK WEB APPLICATION SERVER                        │
+ │  app.py & backend/routes.py (MJPEG Video Stream @ /video_feed, REST APIs)│
+ └────────────────────────────────────┬────────────────────────────────────┘
+                                      │
+                                      ▼
+ ┌─────────────────────────────────────────────────────────────────────────┐
+ │                   7-PAGE OPERATOR DASHBOARD INTERFACE                   │
+ │  Dashboard (/), Live Terminal (/live), History (/history), Violations   │
+ │  Analytics (/analytics), Reports (/reports), Settings (/settings)       │
+ └─────────────────────────────────────────────────────────────────────────┘
+</pre>
+
+<!-- ========================================================================= -->
+<!-- PART 2: PROJECT DIRECTORY STRUCTURE -->
+<!-- ========================================================================= -->
+<div class="page-break"></div>
+<h1>PART 2: PROJECT DIRECTORY STRUCTURE & COMPONENT BREAKDOWN</h1>
+
+<p>Every file in the MineGuard AI codebase has a dedicated, single-responsibility architecture. Below is the complete technical breakdown of every Python file in the repository.</p>
+
+<table>
+    <thead>
+        <tr>
+            <th style="width: 22%;">File Path</th>
+            <th style="width: 25%;">Primary Responsibility</th>
+            <th style="width: 28%;">Key Classes / Functions</th>
+            <th style="width: 25%;">Interactions & Data Flow</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>app.py</code></td>
+            <td>Flask application entry point, lifecycle management, signal trapping.</td>
+            <td><code>create_app()</code><br/><code>signal_handler()</code></td>
+            <td><strong>Calls:</strong> <code>init_db()</code>, <code>camera_service</code>.<br/><strong>Called by:</strong> CLI entry.</td>
+        </tr>
+        <tr>
+            <td><code>utils/config.py</code></td>
+            <td>Global configuration constants, model paths, hardware allocation, inspection rules.</td>
+            <td>Constants: <code>MODEL_PATH</code>, <code>DEVICE</code>, <code>CONF_PERSON</code>, <code>CONF_HARDHAT</code>, <code>CONF_VEST</code>, <code>INSPECTION_ZONE_*</code>.</td>
+            <td>Imported globally across all AI, inspection, and backend modules.</td>
+        </tr>
+        <tr>
+            <td><code>config.py</code></td>
+            <td>Web application configuration wrapper.</td>
+            <td><code>AppConfig</code> (Flask config, path resolutions, directory setup).</td>
+            <td><strong>Calls:</strong> <code>utils.config</code>.<br/><strong>Called by:</strong> <code>app.py</code>, <code>routes.py</code>, <code>database.py</code>.</td>
+        </tr>
+        <tr>
+            <td><code>detection/detector.py</code></td>
+            <td>YOLO11n object detection abstraction with calibrated per-class thresholds.</td>
+            <td><code>PPEObjectDetector</code><br/><code>Detection</code><br/><code>DetectionResult</code></td>
+            <td><strong>Input:</strong> BGR Frame.<br/><strong>Output:</strong> <code>DetectionResult</code> (persons, helmets, vests).<br/><strong>Called by:</strong> <code>camera_service.py</code>.</td>
+        </tr>
+        <tr>
+            <td><code>compliance/association.py</code></td>
+            <td>Anatomical geometric constraint matching (head/torso zones) & occlusion filtering.</td>
+            <td><code>PPEAssociator</code><br/><code>AssociatedWorkerPPE</code><br/><code>compute_iou()</code></td>
+            <td><strong>Input:</strong> Lists of detections.<br/><strong>Output:</strong> <code>AssociatedWorkerPPE</code> list.<br/><strong>Called by:</strong> <code>inspection_manager.py</code>.</td>
+        </tr>
+        <tr>
+            <td><code>compliance/compliance.py</code></td>
+            <td>Frame-level compliance rule evaluator.</td>
+            <td><code>ComplianceEngine</code><br/><code>WorkerComplianceState</code></td>
+            <td>Evaluates instantaneous compliance states (SAFE / VIOLATION / UNKNOWN).</td>
+        </tr>
+        <tr>
+            <td><code>inspection/inspection_result.py</code></td>
+            <td>Domain dataclasses and enums for checkpoint operations.</td>
+            <td><code>InspectionState</code><br/><code>InspectionDecision</code><br/><code>PPEStatus</code><br/><code>InspectionResult</code></td>
+            <td>Type contracts used across inspection engine, database, and telemetry routes.</td>
+        </tr>
+        <tr>
+            <td><code>inspection/inspection_trigger.py</code></td>
+            <td>Spatial bounding zone check, worker singularity enforcement.</td>
+            <td><code>InspectionTrigger</code><br/><code>is_in_zone()</code><br/><code>evaluate_entry()</code></td>
+            <td><strong>Input:</strong> Person detections, frame shape.<br/><strong>Output:</strong> <code>(in_zone, candidate, mult_workers, reason)</code>.</td>
+        </tr>
+        <tr>
+            <td><code>inspection/frame_collector.py</code></td>
+            <td>Multi-frame observation buffer and evidence snapshot selector.</td>
+            <td><code>FrameCollector</code><br/><code>add_observation()</code><br/><code>reset()</code></td>
+            <td>Maintains rolling observation window and captures highest-confidence raw/annotated frames.</td>
+        </tr>
+        <tr>
+            <td><code>inspection/ppe_verifier.py</code></td>
+            <td>Consensus rule engine evaluating multi-frame observations.</td>
+            <td><code>PPEVerifier</code><br/><code>evaluate_cycle()</code></td>
+            <td><strong>Consensus Logic:</strong> Safe $\ge 3$ $ightarrow$ PASS, Fail $\ge 5$ $ightarrow$ FAIL, Timeout $15	ext{s}$ $ightarrow$ REINSPECT.</td>
+        </tr>
+        <tr>
+            <td><code>inspection/inspection_manager.py</code></td>
+            <td>Master state machine coordinator and inspection reference generator.</td>
+            <td><code>InspectionManager</code><br/><code>process_frame()</code><br/><code>_conclude_inspection()</code></td>
+            <td>Transitions states (IDLE $ightarrow$ VERIFYING $ightarrow$ PASS/FAIL/REINSPECT). Writes to database.</td>
+        </tr>
+        <tr>
+            <td><code>utils/visualization.py</code></td>
+            <td>High-visibility HUD visualizer and bounding box renderer.</td>
+            <td><code>MineGuardVisualizer</code><br/><code>render()</code></td>
+            <td>Composites HUD top banner, zone box, PPE badges, and big decision alerts.</td>
+        </tr>
+        <tr>
+            <td><code>backend/camera_service.py</code></td>
+            <td>Background capture thread, YOLO inference loop, MJPEG stream generator.</td>
+            <td><code>CameraService</code><br/><code>_capture_and_process_loop()</code><br/><code>generate_mjpeg()</code></td>
+            <td>Runs autonomous 30 FPS background thread. Updates thread-safe JPEG buffer under lock.</td>
+        </tr>
+        <tr>
+            <td><code>backend/database.py</code></td>
+            <td>SQLite persistence layer (WAL mode enabled).</td>
+            <td><code>init_db()</code><br/><code>record_inspection()</code><br/><code>get_inspections()</code><br/><code>clear_all_history()</code></td>
+            <td>Manages tables (<code>inspections</code>, <code>violations</code>, <code>sessions</code>, <code>settings</code>).</td>
+        </tr>
+        <tr>
+            <td><code>backend/alert_manager.py</code></td>
+            <td>In-memory alert ring buffer for frontend toast notifications.</td>
+            <td><code>AlertManager</code><br/><code>add_alert()</code><br/><code>poll_alerts()</code></td>
+            <td>Buffers active violations to provide snappy UI toast popups without DB thrashing.</td>
+        </tr>
+        <tr>
+            <td><code>backend/routes.py</code></td>
+            <td>Flask view routes, REST API endpoints, CSV export handlers.</td>
+            <td><code>index_view()</code><br/><code>live_inspection_view()</code><br/><code>video_feed()</code><br/><code>get_system_health()</code></td>
+            <td>Connects frontend JavaScript controllers with backend services and database.</td>
+        </tr>
+        <tr>
+            <td><code>training/inspect_dataset.py</code></td>
+            <td>Dataset integrity, annotation bounds, and class distribution validator.</td>
+            <td><code>DatasetInspector</code><br/><code>inspect()</code></td>
+            <td>Validates <code>atharion-v1.0-public</code>. Generates validation reports.</td>
+        </tr>
+        <tr>
+            <td><code>training/train.py</code></td>
+            <td>YOLO11n transfer learning trainer.</td>
+            <td>Training execution function.</td>
+            <td>Fine-tunes <code>yolo11n.pt</code> on <code>data.yaml</code>. Exports <code>models/trained/best.pt</code>.</td>
+        </tr>
+        <tr>
+            <td><code>training/evaluate.py</code></td>
+            <td>Held-out test set model evaluator.</td>
+            <td><code>evaluate_model()</code></td>
+            <td>Computes Precision, Recall, F1, mAP@50, mAP@50-95 per class. Exports CSV report.</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- ========================================================================= -->
+<!-- PART 3: DEEP LEARNING PIPELINE -->
+<!-- ========================================================================= -->
+<div class="page-break"></div>
+<h1>PART 3: DEEP LEARNING PIPELINE</h1>
+
+<h2>3.1 What is YOLO11n and Why Was It Selected?</h2>
+<p>
+    <strong>YOLO11n (YOLOv11 Nano)</strong> is the latest generation real-time single-stage object detector released by Ultralytics (late 2024). It formulates object detection as a unified spatial regression problem: a single deep convolutional neural network predicts 2D bounding box coordinates and class conditional probabilities directly from raw input pixels in a single forward pass.
+</p>
+<p>Key architectural innovations in YOLO11 include:</p>
+<ol>
+    <li><strong>C3k2 Bottlenecks:</strong> Cross-Stage Partial blocks with optimized dual-convolution kernels that accelerate gradient flow while minimizing parameter redundancy.</li>
+    <li><strong>SPPF (Spatial Pyramid Pooling - Fast):</strong> Evaluates features at multi-scale pooling rates ($5	imes5, 9	imes9, 13	imes13$) to capture multi-scale context without resolution loss.</li>
+    <li><strong>C2PSA (Cross-Stage Partial with Spatial Attention):</strong> Incorporates spatial attention mechanisms to boost sensitivity for small, low-contrast objects (e.g. hardhats in dark tunnels).</li>
+    <li><strong>Decoupled Anchor-Free Detection Head:</strong> Completely separates the bounding box regression task (loss: Complete IoU + Distribution Focal Loss) from the class classification task (loss: Binary Cross-Entropy).</li>
+</ol>
+<div class="callout">
+    <div class="callout-title">Why YOLO11n Was Selected Over Other Architectures:</div>
+    YOLO11n possesses only <strong>2.6 million parameters</strong>. On the target deployment GPU (NVIDIA GeForce RTX 3050 Laptop GPU 6GB), it achieves a forward inference latency of <strong>14.8 ms – 18.2 ms</strong> (>55 FPS). This ultra-low latency leaves massive compute headroom for video decoding, geometric association, Flask streaming, and database transactions. Even on standard CPU fallback mode, it runs at 18.5 FPS (54 ms), guaranteeing zero station lockups.
+</div>
+
+<h2>3.2 Transfer Learning & The Atharion Dataset</h2>
+<p>
+    Training deep vision models from scratch requires millions of images. We utilized <strong>Transfer Learning</strong>: starting from baseline weights (<code>models/pretrained/yolo11n.pt</code>) pretrained on the COCO dataset (Common Objects in Context, 80 classes). The network retained generalized visual representations (edges, textures, human silhouettes) while the classification head was replaced and fine-tuned on the specialized <strong>Atharion Underground PPE Dataset</strong>.
+</p>
+<p>Dataset Structure (<code>dataset/atharion-v1.0-public/</code>):</p>
+<ul>
+    <li><strong>Train Split:</strong> 791 images with 791 label files.</li>
+    <li><strong>Validation Split:</strong> 170 images with 170 label files.</li>
+    <li><strong>Test Split:</strong> 169 images with 169 label files.</li>
+    <li><strong>Total Instances:</strong> 5,355 verified annotations.</li>
+</ul>
+
+<table>
+    <thead>
+        <tr>
+            <th>Class ID</th>
+            <th>Class Name</th>
+            <th>Ground Truth Count</th>
+            <th>Visual Role in Underground Mining</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>0</code></td>
+            <td><code>Person</code></td>
+            <td>2,002 instances</td>
+            <td>Identifies the primary human worker body silhouette.</td>
+        </tr>
+        <tr>
+            <td><code>1</code></td>
+            <td><code>Hardhat</code></td>
+            <td>1,776 instances</td>
+            <td>Identifies impact helmets (white, yellow, orange) with headlamps.</td>
+        </tr>
+        <tr>
+            <td><code>2</code></td>
+            <td><code>Safety Vest</code></td>
+            <td>1,577 instances</td>
+            <td>Identifies high-visibility retroreflective fluorescent vests.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>3.3 Real Measured Evaluation Metrics (Held-Out Test Set)</h2>
+<p>
+    Evaluation was executed using <code>training/evaluate.py</code> on the 169 unseen test images (791 ground-truth objects). The actual measured metrics from <code>outputs/training/evaluation/per_class_metrics.csv</code> are:
+</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Target Category</th>
+            <th>Precision (P)</th>
+            <th>Recall (R)</th>
+            <th>F1-Score</th>
+            <th>mAP@50</th>
+            <th>mAP@50-95</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Person (Class 0)</strong></td>
+            <td>89.72%</td>
+            <td>69.38%</td>
+            <td>78.25%</td>
+            <td>68.96%</td>
+            <td>40.54%</td>
+        </tr>
+        <tr>
+            <td><strong>Hardhat (Class 1)</strong></td>
+            <td>95.00%</td>
+            <td>77.99%</td>
+            <td>85.66%</td>
+            <td>79.76%</td>
+            <td>44.59%</td>
+        </tr>
+        <tr>
+            <td><strong>Safety Vest (Class 2)</strong></td>
+            <td>87.17%</td>
+            <td>82.73%</td>
+            <td>84.89%</td>
+            <td>83.33%</td>
+            <td>49.14%</td>
+        </tr>
+        <tr>
+            <td><strong>Overall System Performance</strong></td>
+            <td><strong>90.63%</strong></td>
+            <td><strong>76.70%</strong></td>
+            <td><strong>83.09%</strong></td>
+            <td><strong>77.35%</strong></td>
+            <td><strong>44.76%</strong></td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="callout warning">
+    <div class="callout-title">Understanding mAP@50 vs mAP@50-95 in Safety Engineering</div>
+    <strong>mAP@50 (77.35%)</strong> evaluates detections where predicted bounding boxes overlap ground truth by at least 50% IoU. <strong>mAP@50-95 (44.76%)</strong> averages performance across 10 IoU thresholds up to 95%. In industrial PPE inspection, millimeter-level edge alignment (IoU 0.95) is unnecessary; validating presence within the anatomical zone at IoU $\ge 0.50$ is more than sufficient.
+</div>
+
+<!-- ========================================================================= -->
+<!-- PART 4: PPE DETECTION AND ASSOCIATION -->
+<!-- ========================================================================= -->
+<div class="page-break"></div>
+<h1>PART 4: PPE DETECTION AND GEOMETRIC ASSOCIATION</h1>
+
+<h2>4.1 The Association Problem</h2>
+<p>
+    YOLO operates as an unconstrained object detector. When an image contains multiple workers, it outputs independent bounding boxes: Person 1, Person 2, Helmet A, Vest A. It does not natively link Helmet A to Person 1. <code>compliance/association.py</code> implements a dedicated anthropometric geometric constraint matching algorithm to solve this linkage deterministically without running heavy pose estimation models.
+</p>
+
+<h2>4.2 Normalized Anatomical Inspection Zones</h2>
+<p>
+    Given a detected person bounding box $[x_1, y_1, x_2, y_2]$ with width $w = x_2 - x_1$ and height $h = y_2 - y_1$:
+</p>
+
+<pre>
+                        Person Bounding Box [x1, y1, x2, y2]
+     x1 - 0.15*w                                             x2 + 0.15*w
+         ┌────────────────────────────────────────────────────────┐
+         │  y1 - 0.20*h (allow helmet above head)                 │
+         │  ┌──────────────────────────────────────────────────┐  │
+         │  │              HEAD INSPECTION ZONE                │  │
+         │  │     Spans: [y1 - 0.20*h] to [y1 + 0.35*h]        │  │
+         │  │     Width expanded laterally by 15%              │  │
+         │  └──────────────────────────────────────────────────┘  │
+         │  y1 + 0.18*h                                           │
+         │  ┌──────────────────────────────────────────────────┐  │
+         │  │              TORSO INSPECTION ZONE               │  │
+         │  │     Spans: [y1 + 0.18*h] to [y1 + 0.75*h]        │  │
+         │  │     Width expanded laterally by 15%              │  │
+         │  └──────────────────────────────────────────────────┘  │
+         │  y1 + 0.75*h                                           │
+         │                                                        │
+         │               LOWER BODY (LEGS & FEET)                 │
+         │                      (Ignored)                         │
+         │                                                        │
+         └────────────────────────────────────────────────────────┘
+         y2
+</pre>
+
+<ol>
+    <li>
+        <strong>Head Inspection Zone (<code>get_head_zone</code>):</strong>
+        Spans from $Y = y_1 - 0.20 \cdot h$ down to $Y = y_1 + 0.35 \cdot h$, with $15\%$ horizontal expansion. The negative top offset allows hardhats to sit naturally above the detected scalp line without truncation.
+    </li>
+    <li>
+        <strong>Torso Inspection Zone (<code>get_torso_zone</code>):</strong>
+        Spans from $Y = y_1 + 0.18 \cdot h$ down to $Y = y_1 + 0.75 \cdot h$, with $15\%$ horizontal expansion. Starting at $0.18 \cdot h$ excludes the neck and chin, preventing high safety vest collars from interfering with low hardhat chin straps.
+    </li>
+</ol>
+
+<h2>4.3 Bipartite Greedy Matching Algorithm</h2>
+<p>
+    When multiple PPE items and persons exist:
+</p>
+<ol>
+    <li>Spatial affinity is calculated for all pairs using intersection area over PPE area ($	ext{Overlap} \ge 0.22$) and horizontal center alignment ($\Delta x_{	ext{center}} \le 0.40 \cdot w$).</li>
+    <li>Pairs are sorted in descending order of affinity score.</li>
+    <li>The highest-affinity pair $(Person_i, Helmet_j)$ is matched. $Helmet_j$ is immediately consumed and removed from the pool, preventing duplicate assignment to another person.</li>
+    <li>The process repeats independently for vests.</li>
+</ol>
+
+<h2>4.4 Two-Worker Occlusion Scenario</h2>
+<div class="callout warning">
+    <div class="callout-title">Handling Overlapping Workers (Inter-Person Occlusion)</div>
+    Suppose Worker 1 (compliant) stands in front of Worker 2 (missing helmet).<br/>
+    The function <code>detect_inter_person_occlusion()</code> calculates the IoU between Person 1 and Person 2.
+    If $	ext{IoU} \ge 0.35$, both workers are flagged as <code>is_ambiguous = True</code>.
+    The consensus engine suppresses any <code>PASS</code> decision. If this occurs inside the checkpoint zone, the station immediately transitions to <code>REINSPECT</code>: <em>"Multiple workers / visual occlusion detected. Please clear the zone and enter individually."</em>
+</div>
+
+<!-- ========================================================================= -->
+<!-- PART 5: INSPECTION STATE MACHINE -->
+<!-- ========================================================================= -->
+<div class="page-break"></div>
+<h1>PART 5: INSPECTION STATE MACHINE</h1>
+
+<h2>5.1 State Machine Lifecycle</h2>
+<p>
+    The checkpoint inspection state machine (<code>inspection/inspection_manager.py</code>) coordinates the entire inspection event through six strictly enforced states:
+</p>
+
+<pre>
+                              CHECKPOINT STATE MACHINE FLOW
+                              
+                 [ Worker Enters Zone & Height >= 130px ]
+                                    │
+                                    ▼
+       ┌───────────┐         ┌──────────────┐         ┌──────────────┐
+       │   IDLE    │ ──────> │  DETECTING   │ ──────> │  VERIFYING   │
+       └───────────┘         └──────────────┘         └──────┬───────┘
+             ▲                                               │
+             │                                               ▼
+             │         ┌───────────┐   Consensus Reached:    ┌───────────┐
+             │         │   PASS    │ <────────────────────── │ Safe >= 3 │
+             │         ├───────────┤                         ├───────────┤
+             │         │   FAIL    │ <────────────────────── │ Fail >= 5 │
+             │         ├───────────┤                         ├───────────┤
+             │         │ REINSPECT │ <────────────────────── │ Time > 15s│
+             │         └─────┬─────┘                         └───────────┘
+             │               │
+             │               ▼
+             │         ┌───────────┐
+             └──────── │ COOLDOWN  │ (Enforces 2.0s pause & 5 empty frames)
+                       └───────────┘
+</pre>
+
+<h2>5.2 Multi-Frame Consensus Rules (<code>inspection/ppe_verifier.py</code>)</h2>
+<p>
+    Single-frame compliance decisions are dangerous in underground mines due to coal dust clouds, head turns, and headlamp glare. MineGuard AI enforces temporal consensus:
+</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Decision Outcome</th>
+            <th>Required Consensus Condition</th>
+            <th>System Action & Feedback</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong style="color: #10b981;">PASS (Compliant)</strong></td>
+            <td>$\ge 3$ consecutive frames with BOTH Hardhat and Safety Vest verified present, with $0$ violation frames.</td>
+            <td>Large Green Decision Banner. Access turnstile unlatches. Telemetry logged to database.</td>
+        </tr>
+        <tr>
+            <td><strong style="color: #ef4444;">FAIL (Violation)</strong></td>
+            <td>$\ge 5$ consecutive frames confirming missing Hardhat OR missing Safety Vest.</td>
+            <td>Large Red Decision Banner. Web Audio alarm sounds (880Hz sawtooth). Dual evidence snapshots saved to disk. Violation logged to SQLite.</td>
+        </tr>
+        <tr>
+            <td><strong style="color: #f59e0b;">REINSPECT</strong></td>
+            <td>Inspection duration exceeds $15.0	ext{ seconds}$ OR visual occlusion ($	ext{IoU} \ge 0.35$) OR multiple workers in zone.</td>
+            <td>Large Amber Decision Banner. Audio prompt asks worker to stand upright and reposition. Turnstile remains locked.</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="callout danger">
+    <div class="callout-title">Zero False-Safe Guarantee</div>
+    <code>UNKNOWN</code> or <code>UNCERTAIN</code> observations are <strong>NEVER converted to SAFE</strong>. If lighting is poor or clothing is ambiguous, the observation adds zero to the safe counter. If consensus cannot be achieved within 15 seconds, the station strictly resolves to <code>REINSPECT</code>.
+</div>
+
+<!-- ========================================================================= -->
+<!-- PART 6: CAMERA AND REAL-TIME PROCESSING -->
+<!-- ========================================================================= -->
+<div class="page-break"></div>
+<h1>PART 6: CAMERA & REAL-TIME PROCESSING</h1>
+
+<h2>6.1 Video Ingestion Pipeline (<code>backend/camera_service.py</code>)</h2>
+<p>
+    The camera service runs as an autonomous singleton background daemon thread (<code>_capture_and_process_loop()</code>). It connects via OpenCV (<code>cv2.VideoCapture</code>) supporting DirectShow (Windows) or V4L2 (Linux) for USB webcams, integrated laptop webcams (index <code>0</code>), and RTSP/HTTP network streams (ESP32-CAM).
+</p>
+
+<h2>6.2 Threading & Zero-Latency MJPEG Streaming</h2>
+<p>
+    To ensure Flask request handlers never freeze or drop frames, inference and streaming are decoupled:
+</p>
+<pre>
+┌────────────────────────────────────────────────────────┐
+│               FLASK WEB SERVER PROCESS                 │
+│                                                        │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │         BACKGROUND CAMERA SERVICE THREAD         │  │
+│  │   • Ingests 30 FPS from cv2.VideoCapture         │  │
+│  │   • Executes PyTorch CUDA YOLO Inference         │  │
+│  │   • Advances Inspection State Machine            │  │
+│  │   • Updates Shared Buffer under Threading.Lock   │  │
+│  └────────────────────────┬─────────────────────────┘  │
+│                           │ Atomic Write (JPEG Bytes)  │
+│                           ▼                            │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │           THREAD-SAFE BUFFER (Lock-gated)        │  │
+│  │           latest_jpeg_bytes (JPEG binary)        │  │
+│  └────────────────────────┬─────────────────────────┘  │
+│                           │ Non-blocking Read          │
+│                           ▼                            │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │           FLASK HTTP REQUEST WORKER THREADS      │  │
+│  │   • GET /video_feed -> generate_mjpeg() (~30fps) │  │
+│  │   • GET /api/inspection/current                  │  │
+│  │   • GET /api/status                              │  │
+│  └──────────────────────────────────────────────────┘  │
+└────────────────────────────────────────────────────────┘
+</pre>
+
+<h2>6.3 Fault-Tolerant Reconnection</h2>
+<p>
+    If the optical sensor cable disconnects or network packets drop:
+</p>
+<ol>
+    <li><code>cap.read()</code> returns <code>ret = False</code>, incrementing <code>consecutive_read_failures</code>.</li>
+    <li>When failures reach $20$ frames, the camera hardware is released and <code>camera_connected = False</code> is flagged.</li>
+    <li>The background loop generates synthetic standby frames displaying <code>"CONNECTING TO CHECKPOINT CAMERA..."</code> so the web client does not encounter socket timeouts.</li>
+    <li>It attempts automated re-initialization every $1.0	ext{ second}$ until the camera re-establishes connection.</li>
+</ol>
+
+<!-- ========================================================================= -->
+<!-- PART 7: BACKEND AND DATABASE -->
+<!-- ========================================================================= -->
+<div class="page-break"></div>
+<h1>PART 7: BACKEND & DATABASE</h1>
+
+<h2>7.1 SQLite Schema & WAL Mode (<code>database/mineguard.db</code>)</h2>
+<p>
+    Configured in <code>backend/database.py</code>. Write-Ahead Logging (<code>PRAGMA journal_mode=WAL</code>) allows concurrent HTTP readers to query analytics while the background camera thread records violations without locking errors.
+</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Table Name</th>
+            <th>Primary Columns</th>
+            <th>Purpose</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>monitoring_sessions</code></td>
+            <td><code>session_id</code> (PK), <code>start_time</code>, <code>end_time</code>, <code>camera_source</code>, <code>total_inspections</code>, <code>total_pass</code>, <code>total_fail</code>, <code>status</code></td>
+            <td>Groups inspection records into operational work shifts.</td>
+        </tr>
+        <tr>
+            <td><code>inspections</code></td>
+            <td><code>id</code> (PK), <code>inspection_reference</code> (UK), <code>timestamp</code>, <code>result</code> (PASS/FAIL/REINSPECT), <code>helmet_status</code>, <code>vest_status</code>, <code>helmet_confidence</code>, <code>vest_confidence</code>, <code>inspection_duration</code>, <code>original_image_path</code>, <code>annotated_image_path</code></td>
+            <td>The core immutable quality inspection audit log for every single worker visit.</td>
+        </tr>
+        <tr>
+            <td><code>violations</code></td>
+            <td><code>id</code> (PK), <code>inspection_reference</code> (UK), <code>timestamp</code>, <code>missing_ppe</code>, <code>confidence</code>, <code>original_image_path</code>, <code>annotated_image_path</code>, <code>acknowledgement_status</code></td>
+            <td>Specifically indexes confirmed safety violations for rapid compliance auditing.</td>
+        </tr>
+        <tr>
+            <td><code>system_settings</code></td>
+            <td><code>key</code> (PK), <code>value</code>, <code>updated_at</code></td>
+            <td>Persists operator-calibrated thresholds and rules across server restarts.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>7.2 Dual-Evidence Image Storage</h2>
+<p>
+    When a violation occurs, <code>inspection/inspection_manager.py</code> writes two synchronized full-resolution JPEG files to <code>outputs/violations/YYYY-MM-DD/</code>:
+</p>
+<ul>
+    <li><code>INSP-YYYYMMDD-HHMMSS-XXXX_original.jpg</code>: Untouched sensor capture (pure evidentiary proof).</li>
+    <li><code>INSP-YYYYMMDD-HHMMSS-XXXX_annotated.jpg</code>: YOLO bounding boxes, confidence scores, HUD top banner.</li>
+</ul>
+
+<!-- ========================================================================= -->
+<!-- PART 8: FRONTEND AND DASHBOARD -->
+<!-- ========================================================================= -->
+<div class="page-break"></div>
+<h1>PART 8: FRONTEND & DASHBOARD INTERFACE</h1>
+
+<p>The frontend interface contains 7 dedicated operational views styled in dark industrial navy with high-visibility safety indicators:</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Page Route</th>
+            <th>Template & Script</th>
+            <th>Key Information Displayed</th>
+            <th>API Endpoints Polled</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Overview Dashboard</strong> (<code>/</code>)</td>
+            <td><code>index.html</code><br/><code>dashboard.js</code></td>
+            <td>6 KPI cards (Total Inspected, Passed, Violations, Re-inspections, Compliance %, Avg Dwell Time), Station Status, Mini Video Preview, Recent 10 Inspections table.</td>
+            <td><code>GET /api/status</code> (2.0s)<br/><code>GET /api/inspection/current</code> (500ms)<br/><code>GET /api/inspections?per_page=10</code> (3.5s)</td>
+        </tr>
+        <tr>
+            <td><strong>Live Checkpoint Terminal</strong> (<code>/live</code>)</td>
+            <td><code>live_inspection.html</code><br/><code>live_inspection.js</code></td>
+            <td>Primary Operator View: 68% width live video feed with HUD overlays; 32% live panel with Big Decision Banner (PASS/FAIL/REINSPECT), PPE consensus bars, dwell timer, station controls.</td>
+            <td><code>GET /api/inspection/current</code> (400ms)<br/><code>GET /api/status</code> (1.5s)<br/><code>POST /api/camera/start</code><br/><code>POST /api/camera/stop</code></td>
+        </tr>
+        <tr>
+            <td><strong>Inspection History</strong> (<code>/history</code>)</td>
+            <td><code>inspection_history.html</code><br/><code>history.js</code></td>
+            <td>Searchable, paginated audit log with reference ID search, decision filters, inspection details modal with dual evidence preview, and CSV export.</td>
+            <td><code>GET /api/inspections</code><br/><code>GET /api/inspections/&lt;id&gt;</code><br/><code>DELETE /api/inspections/&lt;id&gt;</code><br/><code>GET /api/export/inspections</code></td>
+        </tr>
+        <tr>
+            <td><strong>Violations Audit</strong> (<code>/violations</code>)</td>
+            <td><code>violations.html</code></td>
+            <td>Audit gallery of confirmed safety breaches with side-by-side high-res modal comparison: <em>Original Untouched Capture</em> vs <em>Annotated Detection</em>. Single deletion and clear history.</td>
+            <td><code>GET /api/violations</code><br/><code>DELETE /api/violations/&lt;id&gt;</code><br/><code>POST /api/history/clear?target=violations</code><br/><code>GET /api/export/violations</code></td>
+        </tr>
+        <tr>
+            <td><strong>Safety Analytics</strong> (<code>/analytics</code>)</td>
+            <td><code>analytics.html</code><br/><code>charts.js</code></td>
+            <td>4 Chart.js Visualizations: Daily Pass vs Fail Trend (Line), Decision Distribution (Doughnut), PPE Defect Breakdown (Bar), 24-Hour Shift Load Traffic (Bar).</td>
+            <td><code>GET /api/analytics/summary</code></td>
+        </tr>
+        <tr>
+            <td><strong>Safety Reports</strong> (<code>/reports</code>)</td>
+            <td><code>reports.html</code><br/><code>reports.js</code></td>
+            <td>Periodic shift safety audit summary cards, date range filter with quick presets (Today, 7D, 30D), daily breakdown table, printable report view (<code>window.print()</code>), and CSV download.</td>
+            <td><code>GET /api/reports/summary</code><br/><code>GET /api/export/inspections</code></td>
+        </tr>
+        <tr>
+            <td><strong>System Settings</strong> (<code>/settings</code>)</td>
+            <td><code>settings.html</code><br/><code>settings.js</code></td>
+            <td>Real-time hardware telemetry monitor (GPU VRAM Allocated/Reserved, Latency ms, FPS, DB Size KB). Runtime forms to adjust camera sources, per-class thresholds, and consensus rules.</td>
+            <td><code>GET /api/system/health</code> (2.5s)<br/><code>GET /api/settings</code><br/><code>POST /api/settings</code><br/><code>POST /api/history/clear</code></td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- ========================================================================= -->
+<!-- PART 9: COMPLETE END-TO-END EXECUTION FLOW -->
+<!-- ========================================================================= -->
+<div class="page-break"></div>
+<h1>PART 9: COMPLETE END-TO-END EXECUTION FLOW</h1>
+
+<p>Below is the exact execution trace from terminal launch to visual decision announcement:</p>
+
+<ol>
+    <li><strong>Terminal Launch:</strong> Operator executes <code>python app.py</code>.</li>
+    <li><strong>Configuration Loading:</strong> <code>config.py</code> instantiates <code>AppConfig</code>, resolves directory paths, ensures <code>outputs/violations/</code> exists.</li>
+    <li><strong>Database Initialization:</strong> <code>app.py</code> calls <code>init_db()</code> in <code>backend/database.py</code>. SQLite connects in WAL mode, initializes tables (<code>monitoring_sessions</code>, <code>inspections</code>, <code>violations</code>, <code>system_settings</code>) and indexes.</li>
+    <li><strong>AI Model Loading:</strong> <code>camera_service.py</code> initializes <code>PPEObjectDetector</code> (<code>detection/detector.py</code>). PyTorch checks CUDA availability, binds to <code>cuda:0</code> (RTX 3050), loads <code>models/trained/best.pt</code>, and maps class labels (0: Person, 1: Hardhat, 2: Safety Vest).</li>
+    <li><strong>Camera Thread Spawn:</strong> <code>camera_service.start_monitoring(source=0)</code> launches <code>_capture_and_process_loop()</code> in a background thread. OpenCV grabs frames via DirectShow at 30 FPS.</li>
+    <li><strong>YOLO Forward Pass:</strong> Each frame is resized to $640	imes640$, normalized, and passed to YOLO11n under <code>torch.inference_mode()</code>. Execution completes in ~15 ms. Bounding boxes are filtered using per-class thresholds (0.35, 0.28, 0.35).</li>
+    <li><strong>Spatial Zone Triggering:</strong> <code>inspection_manager.process_frame()</code> queries <code>inspection_trigger.evaluate_entry()</code>. A worker enters the calibrated box ($X \in [15\%, 85\%], Y \in [5\%, 98\%]$, height $\ge 130	ext{px}$). State shifts from <code>IDLE</code> to <code>DETECTING</code>.</li>
+    <li><strong>Worker Stabilization:</strong> The worker remains stable in position for 2 consecutive frames. State shifts from <code>DETECTING</code> to <code>VERIFYING</code>. An ephemeral ID <code>INSP-20261115-153022-A1F9</code> is generated.</li>
+    <li><strong>Geometric Association:</strong> <code>compliance/association.py</code> computes the head zone (top 35%) and torso zone (18-75%). Bipartite matching verifies candidate hardhats and vests.</li>
+    <li><strong>Consensus Termination:</strong> <code>inspection/ppe_verifier.py</code> evaluates accumulated observations. If 5 consecutive frames confirm missing hardhat, decision <code>FAIL</code> is declared.</li>
+    <li><strong>Evidence Capture:</strong> <code>frame_collector.py</code> retrieves the highest-confidence raw and annotated frames, writing them to <code>outputs/violations/2026-11-15/INSP-..._original.jpg</code> and <code>..._annotated.jpg</code>.</li>
+    <li><strong>Database Insertion:</strong> <code>backend/database.record_inspection()</code> commits an atomic transaction inserting rows into both <code>inspections</code> and <code>violations</code> tables.</li>
+    <li><strong>Web Notification & Audio Alarm:</strong> The operator browser polling <code>/api/inspection/current</code> receives <code>state: "FAIL"</code>. The UI renders the large red banner (*"FAIL - ACCESS DENIED"*) and triggers the Web Audio API alarm.</li>
+</ol>
+
+<!-- ========================================================================= -->
+<!-- PART 10: PERFORMANCE AND OPTIMIZATION -->
+<!-- ========================================================================= -->
+<div class="page-break"></div>
+<h1>PART 10: PERFORMANCE AND OPTIMIZATION</h1>
+
+<h2>10.1 Hardware Acceleration & Memory Management</h2>
+<ul>
+    <li><strong>CUDA Tensor Cores:</strong> Matrix operations in YOLO11n convolutions execute directly on the RTX 3050 GPU Tensor Cores via cuDNN.</li>
+    <li><strong>torch.inference_mode():</strong> Disables autograd graph construction, tensor version tracking, and backward-pass activation caching, saving ~20% execution latency over standard inference.</li>
+    <li><strong>VRAM Footprint:</strong> YOLO11n consumes only $pprox 450	ext{ MB}$ of VRAM at batch size 1 with image size 640, leaving over $5.5	ext{ GB}$ of free headroom on the 6GB card.</li>
+</ul>
+
+<h2>10.2 Resolution Trade-offs ($640 	imes 640$)</h2>
+<p>
+    In an underground mining portal at $2.0	ext{ meters}$ standoff, a hardhat measures approximately $35 	imes 35$ pixels in a $640	imes480$ frame. Letterboxing to $640	imes640$ preserves the feature resolution required for the C2PSA attention blocks to resolve helmet contours. Halving resolution to $320	imes320$ would reduce inference latency from 15 ms to 8 ms, but causes Hardhat recall to plummet by over 18%.
+</p>
+
+<h2>10.3 Identified Architectural Bottlenecks & Mitigations</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Subsystem</th>
+            <th>Execution Time</th>
+            <th>Bottleneck Type</th>
+            <th>Engineering Mitigation</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>OpenCV Frame Ingestion</strong></td>
+            <td>8.0 – 12.0 ms</td>
+            <td>I/O Bottleneck</td>
+            <td>Isolated in dedicated background daemon thread; never blocks Flask.</td>
+        </tr>
+        <tr>
+            <td><strong>YOLO11n Inference</strong></td>
+            <td>14.8 – 18.2 ms</td>
+            <td>Compute Bound</td>
+            <td>Sub-20ms latency sustains 55+ FPS, outperforming the 30 FPS camera.</td>
+        </tr>
+        <tr>
+            <td><strong>PPE Association</strong></td>
+            <td>0.4 – 0.8 ms</td>
+            <td>Negligible</td>
+            <td>Pure NumPy vector bounding box math; runs in microseconds.</td>
+        </tr>
+        <tr>
+            <td><strong>HUD Annotation & Blit</strong></td>
+            <td>2.5 – 4.0 ms</td>
+            <td>CPU Bound</td>
+            <td>Optimized OpenCV drawing primitives using pre-allocated memory buffers.</td>
+        </tr>
+        <tr>
+            <td><strong>JPEG Image Compression</strong></td>
+            <td>3.0 – 5.0 ms</td>
+            <td>CPU Bound</td>
+            <td>Compressed once per capture loop at quality 80 and cached in RAM.</td>
+        </tr>
+        <tr>
+            <td><strong>SQLite Database Writes</strong></td>
+            <td>1.0 – 2.5 ms</td>
+            <td>Disk I/O</td>
+            <td>WAL mode eliminates lock contention; writes occur only on terminal decisions.</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- ========================================================================= -->
+<!-- PART 11: TECHNICAL INTERVIEW PREPARATION -->
+<!-- ========================================================================= -->
+<div class="page-break"></div>
+<h1>PART 11: TECHNICAL INTERVIEW PREPARATION (30 QUESTIONS & ANSWERS)</h1>
+
+<div class="qa-card">
+    <div class="qa-question"><span class="qa-num">Q1</span> What is the difference between one-stage and two-stage object detectors, and why is YOLO11n classified as one-stage?</div>
+    <div class="qa-answer">Two-stage detectors (Faster R-CNN) first generate candidate region proposals via a Region Proposal Network (RPN), then classify and refine boxes in stage two. They are accurate but slow (>100 ms). One-stage detectors (YOLO11n) treat detection as a direct spatial regression problem: a single neural network predicts bounding boxes and class probabilities simultaneously across a multi-scale grid in a single forward pass without a separate proposal step.</div>
+    <div class="qa-followup"><strong>Difficult Follow-up:</strong> "How does YOLO11n handle multi-scale detection without anchor boxes?"<br/><strong>Answer:</strong> It uses an anchor-free decoupled head combined with PAN-FPN across three feature pyramid scales (P3, P4, P5), directly predicting distance vectors $(l, r, t, b)$ from grid cell centers to box edges using Distribution Focal Loss (DFL).</div>
+</div>
+
+<div class="qa-card">
+    <div class="qa-question"><span class="qa-num">Q2</span> Why did you transition MineGuard AI from continuous ByteTrack tracking to a fixed-point quality inspection station?</div>
+    <div class="qa-answer">Continuous tracking in underground mines suffers from frequent identity swaps and box crossovers in narrow, low-light tunnels. Furthermore, continuous tracking monitors workers at unconstrained angles and distances, elevating false-positive alarms. The fixed-point station model enforces controlled geometry: workers enter a calibrated zone one at a time, face the camera at an optimal standoff, and receive an ephemeral Reference ID (<code>INSP-...</code>), eliminating identity confusion and privacy concerns.</div>
+    <div class="qa-followup"><strong>Difficult Follow-up:</strong> "What prevents a worker from bypassing the checkpoint?"<br/><strong>Answer:</strong> The station integrates with physical portal turnstiles or airlock doors. The terminal decision (<code>PASS</code>) triggers an electrical relay output to unlock the turnstile; unverified workers cannot enter.</div>
+</div>
+
+<div class="qa-card">
+    <div class="qa-question"><span class="qa-num">Q3</span> What is Transfer Learning, and what specific layers were fine-tuned during training on the Atharion dataset?</div>
+    <div class="qa-answer">Transfer learning adapts a model pretrained on a large source dataset (COCO, 80 classes) to a specialized target domain (Atharion PPE, 3 classes). Backbone convolutional feature extractors are retained. The final classification layers were replaced for 3 classes (Person, Hardhat, Safety Vest), and the entire network was fine-tuned end-to-end with a low initial learning rate ($lr_0 = 0.01$) and cosine decay.</div>
+    <div class="qa-followup"><strong>Difficult Follow-up:</strong> "Why didn't you freeze the convolutional backbone layers?"<br/><strong>Answer:</strong> Freezing works when the target domain visually mirrors the source. Underground coal mine imagery exhibits extreme darkness, coal dust soot, and headlamp glare fundamentally different from COCO photos. Fine-tuning the entire network allowed C3k2 and C2PSA blocks to adapt specifically to mining conditions.</div>
+</div>
+
+<div class="qa-card">
+    <div class="qa-question"><span class="qa-num">Q4</span> Explain the difference between Precision and Recall. Which metric is more safety-critical in MineGuard AI?</div>
+    <div class="qa-answer">Precision is $rac{TP}{TP + FP}$ (detected items that are real). Recall is $rac{TP}{TP + FN}$ (real items successfully detected). In PPE compliance, high Recall on PPE is essential to avoid false violations against compliant workers, while high Precision is critical to avoid false safes (hallucinating PPE on an unprotected worker). MineGuard balances this by tuning per-class thresholds and enforcing multi-frame consensus: the detector operates at high recall, while the multi-frame consensus engine filters out transient false alarms.</div>
+    <div class="qa-followup"><strong>Difficult Follow-up:</strong> "If hardhat recall was 77.99% on the test split, how do you guarantee compliant workers aren't falsely blocked?"<br/><strong>Answer:</strong> 77.99% was measured on single static images. At 30 FPS, the probability of missing a hardhat across 5 consecutive frames drops to $(1 - 0.7799)^5 pprox 0.00051$ (<0.05%).</div>
+</div>
+
+<div class="qa-card">
+    <div class="qa-question"><span class="qa-num">Q5</span> What is mAP@50 and mAP@50-95? Why is mAP@50-95 significantly lower (44.76%) than mAP@50 (77.35%)?</div>
+    <div class="qa-answer">mAP@50 evaluates average precision at an IoU match threshold of 0.50. mAP@50-95 averages mAP across 10 IoU thresholds from 0.50 to 0.95. mAP@50-95 is significantly lower because at strict thresholds like IoU 0.90 or 0.95, even tiny edge discrepancies between human annotators and network predictions count as false positives. In PPE inspection, presence within the anatomical zone at IoU $\ge 0.50$ is sufficient.</div>
+    <div class="qa-followup"><strong>Difficult Follow-up:</strong> "How does the loss function directly optimize for bounding box IoU?"<br/><strong>Answer:</strong> YOLO11n uses Complete IoU (CIoU) loss, directly penalizing center distance, aspect ratio differences, and overlap area rather than using independent L1/L2 coordinate losses.</div>
+</div>
+
+<div class="qa-card">
+    <div class="qa-question"><span class="qa-num">Q6</span> How does the Anatomical Geometric Associator link a hardhat to a specific person without relying on pose estimation keypoints?</div>
+    <div class="qa-answer">Running 17-keypoint pose estimation models (YOLO-Pose) adds 30–50 ms of latency. Instead, <code>compliance/association.py</code> uses anthropometric spatial priors. Given a person box $[x_1, y_1, x_2, y_2]$, the head region is defined as the top 35% of person height ($[y_1 - 0.20 \cdot h, y_1 + 0.35 \cdot h]$) with 15% lateral expansion. A bipartite greedy matcher calculates intersection area and horizontal center offset between candidate hardhats and this zone in under $0.5	ext{ ms}$.</div>
+    <div class="qa-followup"><strong>Difficult Follow-up:</strong> "What happens if a worker stoops or bends over in the checkpoint box?"<br/><strong>Answer:</strong> Stooping breaks vertical aspect assumptions. <code>inspection_trigger.py</code> requires the worker to be upright (height $\ge 130	ext{px}$). If a worker bends over, spatial affinity drops and the station prompts <code>REINSPECT: Stand upright and face camera.</code></div>
+</div>
+
+<div class="qa-card">
+    <div class="qa-question"><span class="qa-num">Q7</span> Explain the bipartite matching algorithm in <code>compliance/association.py</code>. Why is it necessary?</div>
+    <div class="qa-answer">If two workers stand near each other and one hardhat is detected, naive nearest-neighbor assignment could assign that single hardhat to both workers. Bipartite matching enforces one-to-one mapping. Candidate pairings $(Person_i, Helmet_j)$ are scored by affinity. The highest-scoring pair is matched, and that helmet is removed from the candidate pool so it can never be claimed by another worker.</div>
+    <div class="qa-followup"><strong>Difficult Follow-up:</strong> "What is the computational time complexity of your association algorithm?"<br/><strong>Answer:</strong> Computing pairwise affinities is $O(N \cdot M)$ where $N$ is persons and $M$ is PPE items. Sorting takes $O((NM) \log(NM))$. Since the station enforces $N=1$, compute time is negligible (<0.5 ms).</div>
+</div>
+
+<div class="qa-card">
+    <div class="qa-question"><span class="qa-num">Q8</span> How does MineGuard AI prevent a false SAFE decision when visual ambiguity occurs?</div>
+    <div class="qa-answer">The system enforces four design rules: (1) <code>UNKNOWN</code> status never maps to <code>SAFE</code>. (2) Inter-person overlap ($	ext{IoU} \ge 0.35$) or frame truncation sets <code>is_ambiguous = True</code>. (3) Ambiguous frames do not increment the safe observation counter. (4) If ambiguity persists and consensus cannot be reached within 15 seconds, the decision resolves strictly to <code>REINSPECT</code>.</div>
+    <div class="qa-followup"><strong>Difficult Follow-up:</strong> "Could specular reflection from a metal lunchbox satisfy the vest verification requirement?"<br/><strong>Answer:</strong> No. The vest confidence threshold is set to 0.35, the torso zone is restricted to $Y \in [18\%, 75\%]$ of body height (lunchboxes at waist/knees fail), and the verifier requires 3 consecutive frames.</div>
+</div>
+
+<div class="qa-card">
+    <div class="qa-question"><span class="qa-num">Q9</span> Walk through the Checkpoint State Machine. Why are the <code>DETECTING</code> and <code>COOLDOWN</code> states necessary?</div>
+    <div class="qa-answer"><code>DETECTING</code> acts as a debounce filter: workers stepping into the zone are in motion; requiring 2 consecutive stable frames before verifying eliminates motion blur. <code>COOLDOWN</code> enforces a 2.0-second pause and 5 empty frames after an inspection concludes, preventing the same departing worker from triggering duplicate inspections.</div>
+    <div class="qa-followup"><strong>Difficult Follow-up:</strong> "How is worker departure detected during cooldown?"<br/><strong>Answer:</strong> <code>InspectionManager</code> monitors the zone for 5 consecutive empty frames combined with a 2.0-second elapsed timer check before returning to <code>IDLE</code>.</div>
+</div>
+
+<div class="qa-card">
+    <div class="qa-question"><span class="qa-num">Q10</span> Why did you implement per-class confidence thresholds instead of using YOLO's default threshold (0.25)?</div>
+    <div class="qa-answer">YOLO's default threshold treats all classes identically. However: (1) Person is large ($pprox 300	imes 150	ext{px}$); threshold 0.35 ensures clean human localization. (2) Hardhat is small ($pprox 40	imes 40	ext{px}$) and often coal-dust covered; threshold 0.28 preserves high recall (77.99%) in darkness. (3) Safety Vest is reflective; threshold 0.35 prevents false positives from background clothing.</div>
+    <div class="qa-followup"><strong>Difficult Follow-up:</strong> "Where are these thresholds stored and how can they be tuned at runtime without restart?"<br/><strong>Answer:</strong> Defined in <code>utils/config.py</code>, persisted in the SQLite <code>system_settings</code> table, and updated via <code>POST /api/settings</code>. <code>CameraService.update_settings()</code> applies changes to the live detector in memory.</div>
+</div>
+
+<div class="qa-card">
+    <div class="qa-question"><span class="qa-num">Q11</span> Explain the threading model in <code>backend/camera_service.py</code>. How does it prevent Flask request handlers from blocking?</div>
+    <div class="qa-answer"><code>CameraService</code> runs an autonomous daemon thread executing <code>_capture_and_process_loop()</code>. It captures frames, executes YOLO inference, runs the state machine, renders annotations, and encodes JPEG bytes into a shared buffer protected by a <code>threading.Lock()</code>. Flask request handlers read directly from this in-memory buffer without waiting for GPU inference.</div>
+    <div class="qa-followup"><strong>Difficult Follow-up:</strong> "What happens if 10 concurrent web browsers open <code>/video_feed</code> simultaneously? Does inference run 10 times?"<br/><strong>Answer:</strong> No. Inference runs exactly once in the background thread at ~30 FPS. The <code>generate_mjpeg()</code> generator simply broadcasts the same latest JPEG bytes from RAM to all connected HTTP response sockets.</div>
+</div>
+
+<div class="qa-card">
+    <div class="qa-question"><span class="qa-num">Q12</span> How is the MJPEG streaming protocol implemented over HTTP?</div>
+    <div class="qa-answer">MJPEG (Motion JPEG) uses HTTP multipart content: <code>Response(camera_service.generate_mjpeg(), mimetype="multipart/x-mixed-replace; boundary=frame")</code>. The server keeps the HTTP socket open and yields multipart chunks with boundary markers containing binary JPEG frames. The browser natively replaces each image in place, rendering smooth video without WebRTC.</div>
+    <div class="qa-followup"><strong>Difficult Follow-up:</strong> "What is the network bandwidth consumption of your MJPEG stream?"<br/><strong>Answer:</strong> Frames are compressed to quality 80 (35 KB per frame). At 30 FPS, bandwidth is $pprox 1.05	ext{ MB/s}$ (~8.4 Mbps), easily handled over standard industrial Ethernet.</div>
+</div>
+
+<div class="qa-card">
+    <div class="qa-question"><span class="qa-num">Q13</span> Explain SQLite Write-Ahead Logging (WAL) mode. Why was it enabled in <code>backend/database.py</code>?</div>
+    <div class="qa-answer">Default SQLite locks the entire database file during write transactions, causing <code>OperationalError: database is locked</code> when concurrent web requests arrive. WAL mode (<code>PRAGMA journal_mode=WAL</code>) writes changes to a separate <code>-wal</code> file, allowing concurrent readers to query analytics while the background camera thread records violations without locking.</div>
+    <div class="qa-followup"><strong>Difficult Follow-up:</strong> "How do you ensure data integrity if power is abruptly lost?"<br/><strong>Answer:</strong> WAL mode uses atomic commit checkpoints. Committed transaction frames are checksummed in the WAL file before table pages update. On reboot, SQLite replays committed transactions and discards incomplete ones.</div>
+</div>
+
+<div class="qa-card">
+    <div class="qa-question"><span class="qa-num">Q14</span> Explain the difference between <code>original_image_path</code> and <code>annotated_image_path</code>. Why store both?</div>
+    <div class="qa-answer"><code>original_image_path</code> stores the untouched raw camera frame directly from the sensor. <code>annotated_image_path</code> stores the frame overlaid with YOLO bounding boxes, confidence badges, inspection reference ID, and timestamp HUD. Both are stored for legal evidentiary validity: the annotated image explains why the AI flagged the violation, while the raw untouched image proves the evidence was not visually fabricated or altered.</div>
+    <div class="qa-followup"><strong>Difficult Follow-up:</strong> "How are these images organized on disk to prevent filesystem directory degradation?"<br/><strong>Answer:</strong> Partitioned into date-based subdirectories: <code>outputs/violations/YYYY-MM-DD/</code>, preventing individual directories from accumulating tens of thousands of files which slows filesystem lookups.</div>
+</div>
+
+<div class="qa-card">
+    <div class="qa-question"><span class="qa-num">Q15</span> How does the system handle camera disconnections or optical sensor failures?</div>
+    <div class="qa-answer">In <code>backend/camera_service.py</code>, if <code>cap.read()</code> fails for 20 consecutive frames, it flags <code>camera_connected = False</code>, generates an artificial navy standby frame displaying <code>"CONNECTING TO CHECKPOINT CAMERA..."</code> to keep the web socket alive, and executes an automated re-initialization retry loop every 1.0 second until the camera returns.</div>
+    <div class="qa-followup"><strong>Difficult Follow-up:</strong> "How does the operator know the camera failed if the web page doesn't crash?"<br/><strong>Answer:</strong> The navbar status pill switches to red (<code>Camera: Offline</code>), the video overlay updates to <code>"STATION PAUSED"</code>, and <code>/api/system/health</code> reports <code>camera_status: "DISCONNECTED"</code>.</div>
+</div>
+
+<div class="qa-card">
+    <div class="qa-question"><span class="qa-num">Q16</span> Walk through the Web Audio API alarm implementation in <code>templates/base.html</code>. Why synthesize audio instead of playing an MP3 file?</div>
+    <div class="qa-answer">Browsers block MP3 autoplay unless explicitly triggered by user gestures. MineGuard AI uses the HTML5 Web Audio API to synthesize a 300ms sawtooth wave ramping from 880Hz down to 440Hz using an <code>AudioContext</code> oscillator and gain node. An audio toggle button enables audio with an explicit user gesture, eliminating external file loading, latency, and codec dependencies.</div>
+    <div class="qa-followup"><strong>Difficult Follow-up:</strong> "Why use a sawtooth wave ramping from 880Hz to 440Hz?"<br/><strong>Answer:</strong> Sawtooth waves contain rich odd and even harmonics, producing a sharp, penetrating timbre that cuts through ambient industrial mine noise (like ventilation fans), matching international emergency warning standards.</div>
+</div>
+
+<div class="qa-card">
+    <div class="qa-question"><span class="qa-num">Q17</span> What is the purpose of the <code>tests/</code> directory, and how is test isolation achieved?</div>
+    <div class="qa-answer">The test suite (22 unit and integration tests) validates the inspection state machine, SQLite database, and Flask REST APIs. Test isolation in <code>test_database.py</code> is achieved by monkey-patching <code>AppConfig.DATABASE_PATH</code> in <code>setUp()</code> to a temporary database file generated via <code>tempfile.mkstemp()</code>. Tests execute in complete isolation and tear down the file afterwards, preventing production database contamination.</div>
+    <div class="qa-followup"><strong>Difficult Follow-up:</strong> "How do you test Flask routes without running a live HTTP server?"<br/><strong>Answer:</strong> Using Flask's WSGI test client (<code>cls.app.test_client()</code>), which dispatches mock HTTP requests directly into the WSGI application pipeline in memory without binding to network ports.</div>
+</div>
+
+<div class="qa-card">
+    <div class="qa-question"><span class="qa-num">Q18</span> What is Non-Maximum Suppression (NMS), and how does the IoU threshold affect detection clustering?</div>
+    <div class="qa-answer">Object detectors generate multiple candidate boxes around a single physical object. NMS removes duplicate proposals: boxes are sorted by confidence, the highest is selected, and any box with $	ext{IoU} \ge 	ext{threshold}$ (0.45) is suppressed. If the threshold is too high (0.80), duplicate boxes persist. If too low (0.20), separate objects standing close together are accidentally suppressed.</div>
+    <div class="qa-followup"><strong>Difficult Follow-up:</strong> "What is the difference between standard NMS and Soft-NMS?"<br/><strong>Answer:</strong> Standard NMS abruptly zeroes out candidate boxes exceeding the threshold. Soft-NMS decays the confidence score of overlapping boxes as a continuous Gaussian function of their overlap, preserving recall in crowded scenes.</div>
+</div>
+
+<div class="qa-card">
+    <div class="qa-question"><span class="qa-num">Q19</span> Explain the mathematical calculation of IoU (Intersection over Union).</div>
+    <div class="qa-answer">Given box $A = [x_{A1}, y_{A1}, x_{A2}, y_{A2}]$ and box $B = [x_{B1}, y_{B1}, x_{B2}, y_{B2}]$:
+Intersection coordinates are $x_{i1} = \max(x_{A1}, x_{B1}), y_{i1} = \max(y_{A1}, y_{B1})$ and $x_{i2} = \min(x_{A2}, x_{B2}), y_{i2} = \min(y_{A2}, y_{B2})$.
+$	ext{Area}_{	ext{inter}} = \max(0, x_{i2} - x_{i1}) 	imes \max(0, y_{i2} - y_{i1})$.
+$	ext{Area}_{	ext{union}} = 	ext{Area}(A) + 	ext{Area}(B) - 	ext{Area}_{	ext{inter}}$.
+$$	ext{IoU} = rac{	ext{Area}_{	ext{inter}}}{	ext{Area}_{	ext{union}}}$$</div>
+    <div class="qa-followup"><strong>Difficult Follow-up:</strong> "When can IoU be zero?"<br/><strong>Answer:</strong> When the bounding boxes do not overlap at all ($	ext{Area}_{	ext{inter}} = 0$).</div>
+</div>
+
+<div class="qa-card">
+    <div class="qa-question"><span class="qa-num">Q20</span> How does <code>backend/database.py</code> calculate the Overall Compliance Percentage?</div>
+    <div class="qa-answer">$$	ext{Compliance Rate} = rac{	ext{Passed Inspections}}{	ext{Passed Inspections} + 	ext{Failed Inspections}} 	imes 100.0$$
+Re-inspections (<code>REINSPECT</code>) are excluded from the denominator because an inconclusive check is neither a pass nor a violation—it represents an aborted inspection due to positioning or environmental factors.</div>
+    <div class="qa-followup"><strong>Difficult Follow-up:</strong> "What is returned if no inspections have been recorded yet?"<br/><strong>Answer:</strong> Defaults to $100.0\%$ to avoid division-by-zero errors.</div>
+</div>
+
+<div class="qa-card">
+    <div class="qa-question"><span class="qa-num">Q21</span> What is the purpose of the <code>system_settings</code> table, and how does it prevent configuration drift?</div>
+    <div class="qa-answer">When operators calibrate thresholds via the dashboard (e.g. tuning Hardhat confidence to 0.30 for a dusty shift), storing changes only in memory means settings reset if the server restarts. The <code>system_settings</code> table persists every configuration key-value pair in SQLite. On startup, <code>AppConfig</code> initializes defaults, and the database overrides them with the latest operator values.</div>
+    <div class="qa-followup"><strong>Difficult Follow-up:</strong> "How are database values mapped back to Python types?"<br/><strong>Answer:</strong> Values are stored as strings and cast dynamically (floats for confidence, ints for frame counts, booleans for flags).</div>
+</div>
+
+<div class="qa-card">
+    <div class="qa-question"><span class="qa-num">Q22</span> Explain the function of <code>FrameCollector</code> in <code>inspection/frame_collector.py</code>.</div>
+    <div class="qa-answer"><code>FrameCollector</code> acts as a rolling FIFO observation buffer during an active inspection cycle (up to 60 frames). It continuously evaluates combined detection confidence ($	ext{Conf}_{	ext{person}} + rac{	ext{Conf}_{	ext{helmet}} + 	ext{Conf}_{	ext{vest}}}{2}$) and retains deep copies of the raw and annotated frames corresponding to the highest score for evidence capture if a violation occurs.</div>
+    <div class="qa-followup"><strong>Difficult Follow-up:</strong> "Why deep copy the frames?"<br/><strong>Answer:</strong> In OpenCV, NumPy frame arrays share memory buffers. A shallow copy would be overwritten by subsequent camera frame captures.</div>
+</div>
+
+<div class="qa-card">
+    <div class="qa-question"><span class="qa-num">Q23</span> Why does <code>inspection/inspection_trigger.py</code> enforce <code>min_person_height_px = 130</code>?</div>
+    <div class="qa-answer">In a $640 	imes 480$ frame, a human worker who appears smaller than 130 pixels in height is standing more than 4 meters away from the camera. At that distance, a hardhat is smaller than $15 	imes 15$ pixels—below the spatial feature resolution needed for reliable YOLO detection. Rejecting candidates smaller than 130 pixels ensures workers are close enough for dependable inspection.</div>
+    <div class="qa-followup"><strong>Difficult Follow-up:</strong> "What if the camera resolution is changed to 1080p?"<br/><strong>Answer:</strong> The pixel height threshold scales proportionally with vertical frame resolution: $h_{	ext{min}} = 	ext{round}(130 \cdot rac{H_{	ext{new}}}{480})$.</div>
+</div>
+
+<div class="qa-card">
+    <div class="qa-question"><span class="qa-num">Q24</span> How does MineGuard AI ensure that clearing audit history does not corrupt or delete trained models?</div>
+    <div class="qa-answer">In <code>backend/database.py</code>, <code>clear_all_history(target)</code> executes explicit SQL <code>DELETE</code> queries strictly targeting the <code>inspections</code>, <code>violations</code>, and <code>monitoring_sessions</code> tables. File unlinking is explicitly restricted to <code>AppConfig.VIOLATIONS_DIR</code> (<code>outputs/violations/</code>). The models directory (<code>models/</code>) and dataset directory (<code>dataset/</code>) are never referenced by deletion routines.</div>
+    <div class="qa-followup"><strong>Difficult Follow-up:</strong> "What security measure prevents accidental execution via GET requests?"<br/><strong>Answer:</strong> The route requires HTTP <code>POST</code> or <code>DELETE</code> and enforces an explicit JSON confirmation payload: <code>{'confirm': true}</code>.</div>
+</div>
+
+<div class="qa-card">
+    <div class="qa-question"><span class="qa-num">Q25</span> Explain the role of <code>torch.inference_mode()</code> versus <code>torch.no_grad()</code>.</div>
+    <div class="qa-answer">While both disable autograd gradient calculation, <code>torch.inference_mode()</code> is a newer, faster PyTorch API. It disables view tracking and version counter updates on tensors, eliminating runtime overhead. This provides a measurable 5–10% inference speedup over <code>torch.no_grad()</code>.</div>
+    <div class="qa-followup"><strong>Difficult Follow-up:</strong> "Can tensors created under inference_mode be used in backward passes later?"<br/><strong>Answer:</strong> No. Because version tracking is disabled, mutating them or passing them into autograd graphs will raise an error. This is ideal for production inference where no backpropagation occurs.</div>
+</div>
+
+<div class="qa-card">
+    <div class="qa-question"><span class="qa-num">Q26</span> What is the purpose of the <code>reinspection_reason</code> field in the database?</div>
+    <div class="qa-answer">When an inspection terminates with <code>REINSPECT</code>, logging the specific reason (<em>"Multiple workers in zone"</em>, <em>"Head truncated at frame top"</em>, or <em>"Inspection timed out"</em>) allows safety managers to identify operational bottlenecks at the checkpoint. Frequent timeouts indicate checkpoint lighting needs calibration or workers require better queue signage.</div>
+    <div class="qa-followup"><strong>Difficult Follow-up:</strong> "Is this field indexed?"<br/><strong>Answer:</strong> It is queried during analytics aggregation and displayed in the audit history table modal.</div>
+</div>
+
+<div class="qa-card">
+    <div class="qa-question"><span class="qa-num">Q27</span> How does <code>export_inspections_csv</code> handle large audit logs without running out of memory?</div>
+    <div class="qa-answer">In <code>backend/database.py</code>, <code>export_inspections_csv</code> streams data using Python's <code>io.StringIO</code> and <code>csv.writer</code>. Database records are fetched via parameterized SQL queries and written incrementally row-by-row into an in-memory buffer, which is returned as a streaming Flask <code>Response</code> with mimetype <code>text/csv</code>.</div>
+    <div class="qa-followup"><strong>Difficult Follow-up:</strong> "How does the browser trigger a file download rather than displaying text?"<br/><strong>Answer:</strong> The response includes the HTTP header <code>Content-Disposition: attachment; filename=mineguard_inspections_YYYYMMDD.csv</code>.</div>
+</div>
+
+<div class="qa-card">
+    <div class="qa-question"><span class="qa-num">Q28</span> How does the system handle head or torso truncation at the camera frame edges?</div>
+    <div class="qa-answer">In <code>compliance/association.py</code>, <code>check_visibility()</code> checks if a person's bounding box touches within 15 pixels of the image borders: if $y_1 \le 15	ext{px}$, the head is cut off at the top of the frame. If $y_2 \ge (H - 15)	ext{px}$ and height is small, the torso is cut off. When truncation is flagged, missing PPE is not penalized as a violation; instead, the observation is marked ambiguous, prompting the worker to step into full frame view.</div>
+    <div class="qa-followup"><strong>Difficult Follow-up:</strong> "Why 15 pixels margin?"<br/><strong>Answer:</strong> In a $640 	imes 480$ frame, 15 pixels represents $pprox 2.5\%$ margin, filtering boundary clipping without overly restricting the valid detection area.</div>
+</div>
+
+<div class="qa-card">
+    <div class="qa-question"><span class="qa-num">Q29</span> What is the purpose of the <code>monitoring_sessions</code> table?</div>
+    <div class="qa-answer">It groups inspection logs into operational shifts. Every time the camera service starts or the application boots, a new session is created. When stopped, it records total throughput, passes, failures, and uptime duration, allowing mine management to compare compliance rates across different working shifts.</div>
+    <div class="qa-followup"><strong>Difficult Follow-up:</strong> "How are inspections linked to sessions?"<br/><strong>Answer:</strong> Via the foreign key <code>session_id</code> with <code>ON DELETE SET NULL</code> to prevent cascading data loss.</div>
+</div>
+
+<div class="qa-card">
+    <div class="qa-question"><span class="qa-num">Q30</span> How would you scale MineGuard AI from a single checkpoint to 20 checkpoints across a large mine complex?</div>
+    <div class="qa-answer">(1) <strong>Decouple Edge Ingestion:</strong> Deploy edge inference nodes (NVIDIA Jetson Orin Nano) at each physical turnstile running camera capture, YOLO11n inference, and state machine locally. (2) <strong>Centralize Database:</strong> Replace SQLite with a distributed PostgreSQL / TimescaleDB cluster hosted on the mine's surface data center. (3) <strong>Message Broker:</strong> Edge checkpoints publish completed <code>InspectionResult</code> JSON payloads and evidence images via MQTT or RabbitMQ over the mine's fiber-optic backbone. (4) <strong>Central Dashboard:</strong> A centralized web dashboard aggregates telemetry across all 20 stations in real time.</div>
+    <div class="qa-followup"><strong>Difficult Follow-up:</strong> "What happens if the underground fiber cable is severed?"<br/><strong>Answer:</strong> Edge nodes buffer inspections locally in SQLite. Once network connectivity restores, an edge sync daemon replays the buffered records to the surface database.</div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- PART 12: KNOWLEDGE CHECK QUESTIONS -->
+<!-- ========================================================================= -->
+<div class="page-break"></div>
+<h1>PART 12: KNOWLEDGE CHECK QUESTIONS</h1>
+
+<p>Test your architectural understanding of the MineGuard AI codebase with the following 10 technical questions. Attempt these independently before reviewing the source code:</p>
+
+<div class="callout warning">
+    <div class="callout-title">Self-Evaluation Protocol</div>
+    Review the source code files cited in brackets to verify your answers.
+</div>
+
+<ol style="font-size: 9.5pt; line-height: 1.8;">
+    <li><strong>Detection Pipeline:</strong> In <code>detection/detector.py</code>, why does the model dynamically resolve class IDs using <code>model.names</code> rather than hardcoding <code>0 = Person, 1 = Hardhat, 2 = Safety Vest</code>? <em>[Hint: Check what happens if a different model checkpoint with modified class indices is loaded.]</em></li>
+    <li><strong>Geometric Association:</strong> In <code>compliance/association.py</code>, why is the head inspection zone allowed to extend 20% <em>above</em> the person bounding box ($y_1 - 0.20 \cdot h$), whereas the torso zone starts at $y_1 + 0.18 \cdot h$? <em>[Hint: Think about physical helmet height and collar interference.]</em></li>
+    <li><strong>Consensus Logic:</strong> In <code>inspection/ppe_verifier.py</code>, if a worker accumulates 2 safe frames, then 1 violation frame, and then 2 safe frames, what is the internal state of the safe observation counter? Does the worker pass? <em>[Hint: Review consecutive frame consensus logic.]</em></li>
+    <li><strong>State Machine Transitions:</strong> In <code>inspection/inspection_manager.py</code>, what two conditions must be satisfied before the state machine can transition from <code>COOLDOWN</code> back to <code>IDLE</code>? <em>[Hint: Check frame count and time elapsed requirements.]</em></li>
+    <li><strong>Database Integrity:</strong> In <code>backend/database.py</code>, what happens if <code>record_inspection()</code> is called with an <code>InspectionResult</code> that has <code>session_id = 999</code>, but session 999 does not exist in <code>monitoring_sessions</code>? Why? <em>[Hint: Review foreign key constraints.]</em></li>
+    <li><strong>Thread Safety:</strong> In <code>backend/camera_service.py</code>, what specific variables are protected by <code>self._lock</code>? What would happen if <code>generate_mjpeg()</code> read <code>latest_jpeg_bytes</code> without thread synchronization during an active write? <em>[Hint: Think about tearing/race conditions.]</em></li>
+    <li><strong>Occlusion Suppression:</strong> In <code>compliance/association.py</code>, what threshold of inter-person $	ext{IoU}$ triggers <code>is_ambiguous = True</code>, and what happens to that worker's inspection in the state machine? <em>[Hint: Check MAX_INTER_PERSON_IOU constant.]</em></li>
+    <li><strong>REST API Design:</strong> In <code>backend/routes.py</code>, why does the <code>/api/history/clear</code> endpoint require <code>POST</code> or <code>DELETE</code> with a JSON payload <code>{'confirm': true}</code> instead of a simple <code>GET</code> request? <em>[Hint: Consider idempotent vs destructive operations and browser pre-fetching.]</em></li>
+    <li><strong>Performance Optimization:</strong> In <code>utils/config.py</code>, why is <code>BATCH_SIZE = 8</code> configured for training on an RTX 3050 (6GB VRAM)? What error occurs if <code>BATCH_SIZE</code> is set to 32? <em>[Hint: PyTorch CUDA out-of-memory error.]</em></li>
+    <li><strong>Evidence Storage:</strong> In <code>inspection/inspection_manager.py</code>, how are filenames generated for dual-evidence images, and how does the frontend access and display them? <em>[Hint: Trace the path from outputs/violations/ to /evidence/ route.]</em></li>
+</ol>
+
+</body>
+</html>

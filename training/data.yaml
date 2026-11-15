@@ -1,0 +1,14 @@
+# MineGuard AI - Training Dataset Configuration
+# Standardized YOLO configuration referencing the verified dataset splits.
+# Preserves the original class mappings from dataset/atharion-v1.0-public/data.yaml
+
+path: C:/Users/nabee/Documents/PROJECTS/MineGuard/dataset/atharion-v1.0-public
+train: train/images
+val: valid/images
+test: test/images
+
+nc: 3
+names:
+  0: Person
+  1: Hardhat
+  2: Safety Vest

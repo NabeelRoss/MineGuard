@@ -1,0 +1,659 @@
+/* ==========================================================================
+   MineGuard AI - Industrial Safety Monitoring Dashboard Stylesheet
+   Dark Navy / Charcoal Theme with High-Contrast Safety Indicators
+   ========================================================================== */
+
+:root {
+    --bg-primary: #0b1329;
+    --bg-surface: #111e38;
+    --bg-card: #182647;
+    --bg-card-hover: #1f315b;
+    --border-color: #273e6b;
+    --border-subtle: #1c2d50;
+
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+
+    --color-safe: #10b981;
+    --color-safe-bg: rgba(16, 185, 129, 0.15);
+    --color-violation: #ef4444;
+    --color-violation-bg: rgba(239, 68, 68, 0.15);
+    --color-unknown: #f59e0b;
+    --color-unknown-bg: rgba(245, 158, 11, 0.15);
+    --color-brand: #eab308;
+    --color-cyan: #06b6d4;
+
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --transition: all 0.2s ease-in-out;
+}
+
+body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+/* ==========================================================================
+   Top Navigation Bar
+   ========================================================================== */
+.mg-navbar {
+    background-color: var(--bg-surface);
+    border-bottom: 1px solid var(--border-color);
+    padding: 0.75rem 1.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+}
+
+.mg-logo-text {
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    color: var(--color-brand);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.mg-logo-text:hover {
+    color: #fde047;
+}
+
+.mg-status-pill {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.65rem;
+    border-radius: 9999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    letter-spacing: 0.03em;
+}
+
+.mg-status-pill.online {
+    background-color: var(--color-safe-bg);
+    color: var(--color-safe);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.mg-status-pill.offline {
+    background-color: var(--color-violation-bg);
+    color: var(--color-violation);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.mg-status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: currentColor;
+    display: inline-block;
+}
+
+.mg-status-dot.pulse {
+    animation: pulseGlow 1.8s infinite;
+}
+
+@keyframes pulseGlow {
+    0% { transform: scale(0.95); opacity: 0.6; }
+    50% { transform: scale(1.3); opacity: 1; }
+    100% { transform: scale(0.95); opacity: 0.6; }
+}
+
+/* ==========================================================================
+   Layout & Sidebar
+   ========================================================================== */
+.mg-layout {
+    display: flex;
+    min-height: calc(100vh - 60px);
+}
+
+.mg-sidebar {
+    width: 240px;
+    background-color: var(--bg-surface);
+    border-right: 1px solid var(--border-color);
+    padding: 1.5rem 0.75rem;
+    flex-shrink: 0;
+}
+
+.mg-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 1rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+    margin-bottom: 0.35rem;
+}
+
+.mg-nav-link:hover {
+    color: var(--text-primary);
+    background-color: var(--bg-card);
+}
+
+.mg-nav-link.active {
+    color: var(--color-brand);
+    background-color: rgba(234, 179, 8, 0.1);
+    font-weight: 600;
+    border-left: 3px solid var(--color-brand);
+}
+
+.mg-main-content {
+    flex-grow: 1;
+    padding: 1.75rem 2rem;
+    background-color: var(--bg-primary);
+    max-width: calc(100vw - 240px);
+}
+
+/* ==========================================================================
+   Metric / KPI Cards
+   ========================================================================== */
+.mg-card {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.25);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.mg-card:hover {
+    border-color: #3b5a94;
+    transform: translateY(-2px);
+}
+
+.mg-kpi-card {
+    border-top: 3px solid var(--border-color);
+}
+
+.mg-kpi-card.safe { border-top-color: var(--color-safe); }
+.mg-kpi-card.violation { border-top-color: var(--color-violation); }
+.mg-kpi-card.unknown { border-top-color: var(--color-unknown); }
+.mg-kpi-card.brand { border-top-color: var(--color-brand); }
+.mg-kpi-card.cyan { border-top-color: var(--color-cyan); }
+
+.mg-kpi-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+    margin-bottom: 0.35rem;
+}
+
+.mg-kpi-value {
+    font-size: 1.85rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.2;
+}
+
+.mg-kpi-subtitle {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+}
+
+/* ==========================================================================
+   Live Monitoring Video Player
+   ========================================================================== */
+.mg-video-wrapper {
+    position: relative;
+    background-color: #000;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+    aspect-ratio: 4 / 3;
+    max-height: 520px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mg-video-stream {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+.mg-video-overlay-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background-color: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(4px);
+    border: 1px solid var(--border-color);
+    padding: 0.35rem 0.75rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.mg-video-overlay-fps {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background-color: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(4px);
+    border: 1px solid var(--border-color);
+    padding: 0.35rem 0.75rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-cyan);
+    z-index: 10;
+    font-family: monospace;
+}
+
+.mg-video-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+/* ==========================================================================
+   Buttons & Badges
+   ========================================================================== */
+.btn-mg-primary {
+    background-color: var(--color-brand);
+    color: #000;
+    font-weight: 600;
+    border: none;
+    padding: 0.55rem 1.25rem;
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+}
+
+.btn-mg-primary:hover {
+    background-color: #fde047;
+    color: #000;
+}
+
+.btn-mg-danger {
+    background-color: var(--color-violation);
+    color: #fff;
+    font-weight: 600;
+    border: none;
+    padding: 0.55rem 1.25rem;
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+}
+
+.btn-mg-danger:hover {
+    background-color: #dc2626;
+    color: #fff;
+}
+
+.btn-mg-outline {
+    background-color: transparent;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    padding: 0.55rem 1rem;
+    border-radius: var(--radius-sm);
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.btn-mg-outline:hover {
+    background-color: var(--bg-card);
+    border-color: #47659e;
+    color: #fff;
+}
+
+.badge-safe {
+    background-color: var(--color-safe-bg);
+    color: var(--color-safe);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    padding: 0.25rem 0.6rem;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+.badge-violation {
+    background-color: var(--color-violation-bg);
+    color: var(--color-violation);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    padding: 0.25rem 0.6rem;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+.badge-unknown {
+    background-color: var(--color-unknown-bg);
+    color: var(--color-unknown);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    padding: 0.25rem 0.6rem;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+/* ==========================================================================
+   Data Tables
+   ========================================================================== */
+.mg-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    color: var(--text-primary);
+}
+
+.mg-table th {
+    background-color: var(--bg-card);
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.mg-table td {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--border-subtle);
+    font-size: 0.875rem;
+    vertical-align: middle;
+}
+
+.mg-table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+/* ==========================================================================
+   Toast Alerts
+   ========================================================================== */
+.mg-alert-toast-container {
+    position: fixed;
+    top: 75px;
+    right: 20px;
+    z-index: 1060;
+    max-width: 360px;
+}
+
+.mg-toast {
+    background-color: #1e1b2e;
+    border-left: 4px solid var(--color-violation);
+    border-top: 1px solid var(--border-color);
+    border-right: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary);
+    border-radius: var(--radius-sm);
+    padding: 0.85rem 1rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+    margin-bottom: 0.75rem;
+    animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* ==========================================================================
+   Modal Dialogs & Inputs
+   ========================================================================== */
+.modal-content.mg-modal {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    border-radius: var(--radius-md);
+}
+
+.modal-header.mg-modal-header {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.modal-footer.mg-modal-footer {
+    border-top: 1px solid var(--border-color);
+}
+
+.form-control.mg-input, .form-select.mg-input {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    border-radius: var(--radius-sm);
+}
+
+.form-control.mg-input:focus, .form-select.mg-input:focus {
+    background-color: var(--bg-card);
+    border-color: var(--color-brand);
+    color: #fff;
+    box-shadow: 0 0 0 0.2rem rgba(234, 179, 8, 0.2);
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .mg-layout {
+        flex-direction: column;
+    }
+    .mg-sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        padding: 0.75rem 1rem;
+    }
+    .mg-main-content {
+        max-width: 100vw;
+        padding: 1rem;
+    }
+}
+
+
+/* ==========================================================================
+   Checkpoint Inspection Specific Components
+   ========================================================================== */
+
+/* State Badges */
+.badge-pass {
+    background-color: var(--color-safe-bg);
+    color: var(--color-safe);
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    padding: 0.35rem 0.75rem;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.badge-fail {
+    background-color: var(--color-violation-bg);
+    color: var(--color-violation);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    padding: 0.35rem 0.75rem;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.badge-reinspect {
+    background-color: var(--color-unknown-bg);
+    color: var(--color-unknown);
+    border: 1px solid rgba(245, 158, 11, 0.4);
+    padding: 0.35rem 0.75rem;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.badge-verifying {
+    background-color: rgba(6, 182, 212, 0.15);
+    color: var(--color-cyan);
+    border: 1px solid rgba(6, 182, 212, 0.4);
+    padding: 0.35rem 0.75rem;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.badge-detecting {
+    background-color: rgba(234, 179, 8, 0.15);
+    color: var(--color-brand);
+    border: 1px solid rgba(234, 179, 8, 0.4);
+    padding: 0.35rem 0.75rem;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.badge-idle {
+    background-color: rgba(100, 116, 139, 0.15);
+    color: var(--text-secondary);
+    border: 1px solid rgba(100, 116, 139, 0.3);
+    padding: 0.35rem 0.75rem;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+/* Big Decision Terminal Banner */
+.mg-decision-banner {
+    padding: 1.25rem 1.5rem;
+    border-radius: var(--radius-md);
+    text-align: center;
+    border: 2px solid var(--border-color);
+    background-color: var(--bg-card);
+    transition: var(--transition);
+}
+
+.mg-decision-banner.pass {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(16, 185, 129, 0.08) 100%);
+    border-color: var(--color-safe);
+    box-shadow: 0 0 25px rgba(16, 185, 129, 0.25);
+}
+
+.mg-decision-banner.fail {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.25) 0%, rgba(239, 68, 68, 0.08) 100%);
+    border-color: var(--color-violation);
+    box-shadow: 0 0 25px rgba(239, 68, 68, 0.25);
+}
+
+.mg-decision-banner.reinspect {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.25) 0%, rgba(245, 158, 11, 0.08) 100%);
+    border-color: var(--color-unknown);
+    box-shadow: 0 0 25px rgba(245, 158, 11, 0.25);
+}
+
+.mg-decision-banner.verifying {
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.25) 0%, rgba(6, 182, 212, 0.08) 100%);
+    border-color: var(--color-cyan);
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.2);
+}
+
+.mg-decision-title {
+    font-size: 1.75rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.25rem;
+}
+
+.mg-decision-sub {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+/* Custom Progress Bars */
+.mg-progress {
+    height: 8px;
+    background-color: rgba(255, 255, 255, 0.08);
+    border-radius: 9999px;
+    overflow: hidden;
+}
+
+.mg-progress-bar {
+    height: 100%;
+    transition: width 0.3s ease;
+    border-radius: 9999px;
+}
+
+.mg-progress-bar.safe {
+    background: linear-gradient(90deg, #10b981, #34d399);
+}
+
+.mg-progress-bar.violation {
+    background: linear-gradient(90deg, #ef4444, #f87171);
+}
+
+.mg-progress-bar.brand {
+    background: linear-gradient(90deg, #eab308, #fde047);
+}
+
+.mg-progress-bar.cyan {
+    background: linear-gradient(90deg, #06b6d4, #38bdf8);
+}
+
+/* Dual Evidence Display */
+.mg-evidence-frame {
+    background-color: #000;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    position: relative;
+}
+
+.mg-evidence-label {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background-color: rgba(0, 0, 0, 0.75);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Checkpoint Zone Overlay Info */
+.mg-zone-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.3rem 0.7rem;
+    border-radius: var(--radius-sm);
+    background-color: rgba(234, 179, 8, 0.12);
+    border: 1px solid rgba(234, 179, 8, 0.3);
+    color: var(--color-brand);
+}

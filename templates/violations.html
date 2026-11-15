@@ -1,0 +1,374 @@
+{% extends "base.html" %}
+
+{% block title %}MineGuard AI - Safety Violations Audit{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+
+    <!-- PAGE HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h3 class="fw-bold mb-1 text-white">Confirmed Safety Violations</h3>
+            <p class="text-secondary small mb-0">Dual-evidence optical records of underground PPE non-compliance events</p>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <button id="btnExportViolationsCsv" class="btn btn-sm btn-mg-outline d-flex align-items-center gap-1">
+                <i class="bi bi-download text-warning"></i>
+                <span>Export CSV</span>
+            </button>
+            <button id="btnClearViolationsModal" class="btn btn-sm btn-mg-danger d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#confirmClearModal">
+                <i class="bi bi-trash3-fill"></i>
+                <span>Clear Violations</span>
+            </button>
+            <button id="btnRefreshViolations" class="btn btn-sm btn-mg-outline d-flex align-items-center gap-1">
+                <i class="bi bi-arrow-clockwise"></i>
+                <span>Refresh</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- FILTER TOOLBAR -->
+    <div class="mg-card mb-4">
+        <form id="violationFilterForm" class="row g-2 align-items-end">
+            <!-- Search -->
+            <div class="col-lg-3 col-md-6">
+                <label class="form-label text-secondary small fw-bold mb-1">Search ID / Reference</label>
+                <div class="input-group input-group-sm">
+                    <span class="input-group-text bg-dark border-secondary text-secondary"><i class="bi bi-search"></i></span>
+                    <input type="text" class="form-control mg-input" id="searchViolation" placeholder="VIO-... or INSP-...">
+                </div>
+            </div>
+
+            <!-- PPE Filter -->
+            <div class="col-lg-2 col-md-3 col-sm-6">
+                <label class="form-label text-secondary small fw-bold mb-1">Missing PPE Type</label>
+                <select class="form-select form-select-sm mg-input" id="filterPPE">
+                    <option value="ALL">All Categories</option>
+                    <option value="Hardhat">Hardhat Missing</option>
+                    <option value="Safety Vest">Safety Vest Missing</option>
+                </select>
+            </div>
+
+            <!-- Date From -->
+            <div class="col-lg-2 col-md-3 col-sm-6">
+                <label class="form-label text-secondary small fw-bold mb-1">From Date</label>
+                <input type="date" class="form-control form-control-sm mg-input" id="filterDateFrom">
+            </div>
+
+            <!-- Date To -->
+            <div class="col-lg-2 col-md-3 col-sm-6">
+                <label class="form-label text-secondary small fw-bold mb-1">To Date</label>
+                <input type="date" class="form-control form-control-sm mg-input" id="filterDateTo">
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="col-lg-3 col-md-6 d-flex gap-2">
+                <button type="button" class="btn btn-sm btn-mg-primary flex-grow-1" id="btnApplyFilter">
+                    <i class="bi bi-funnel-fill me-1"></i> Apply Filter
+                </button>
+                <button type="button" class="btn btn-sm btn-mg-outline" id="btnResetFilter" title="Reset Filters">
+                    <i class="bi bi-x-circle"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- VIOLATIONS TABLE CARD -->
+    <div class="mg-card">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="d-flex align-items-center gap-2">
+                <h5 class="fw-bold mb-0 text-white">Audit Evidence Log</h5>
+                <span class="badge bg-dark border border-secondary text-danger" id="totalRecordsBadge">0 Violations</span>
+            </div>
+            <div class="text-secondary small" id="paginationInfo">Page 1 of 1</div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="mg-table" id="violationsTable">
+                <thead>
+                    <tr>
+                        <th>Violation ID</th>
+                        <th>Inspection Reference</th>
+                        <th>Timestamp</th>
+                        <th>Missing PPE Equipment</th>
+                        <th>Confidence</th>
+                        <th>Dual Evidence</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="violationsTableBody">
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-5">
+                            <i class="bi bi-shield-check fs-2 d-block mb-2 text-success"></i>
+                            <div>No confirmed safety violations recorded</div>
+                            <div class="small">The station logs dual-evidence snapshots when consensus triggers FAIL</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- PAGINATION CONTROLS -->
+        <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top border-secondary">
+            <button class="btn btn-sm btn-mg-outline" id="btnPrevPage" disabled>
+                <i class="bi bi-chevron-left me-1"></i> Previous
+            </button>
+            <span class="small text-secondary" id="pageNumberDisplay">Page 1</span>
+            <button class="btn btn-sm btn-mg-outline" id="btnNextPage" disabled>
+                Next <i class="bi bi-chevron-right ms-1"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- DUAL EVIDENCE HIGH-RES MODAL -->
+<div class="modal fade" id="evidenceModal" tabindex="-1" aria-labelledby="evidenceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content mg-modal">
+            <div class="modal-header mg-modal-header">
+                <h5 class="modal-title d-flex align-items-center gap-2" id="evidenceModalLabel">
+                    <i class="bi bi-shield-x text-danger"></i>
+                    <span>Violation Evidence Capture Analysis</span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="p-3 rounded bg-black border border-secondary mb-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div>
+                        <span class="badge bg-danger text-white mb-1" id="modalVioId">VIO-...</span>
+                        <div class="font-monospace text-warning small fw-bold" id="modalInspRef">INSP-...</div>
+                    </div>
+                    <div class="text-secondary small" id="modalMeta">
+                        <!-- Populated via JS -->
+                    </div>
+                </div>
+
+                <!-- Dual View Grid -->
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="mg-evidence-frame p-1 text-center">
+                            <span class="mg-evidence-label">ANNOTATED YOLO DETECTION</span>
+                            <img id="evidenceAnnotatedImg" src="" alt="Annotated Detection" class="img-fluid rounded" style="max-height: 480px; object-fit: contain;">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mg-evidence-frame p-1 text-center">
+                            <span class="mg-evidence-label">ORIGINAL UNTOUCHED SENSOR CAPTURE</span>
+                            <img id="evidenceOriginalImg" src="" alt="Original Raw Frame" class="img-fluid rounded" style="max-height: 480px; object-fit: contain;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer mg-modal-footer">
+                <button type="button" class="btn btn-sm btn-mg-outline" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CONFIRM CLEAR ALL MODAL -->
+<div class="modal fade" id="confirmClearModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content mg-modal">
+            <div class="modal-header mg-modal-header border-danger">
+                <h5 class="modal-title text-danger d-flex align-items-center gap-2">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <span>Confirm Clear Violation Records</span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-white">Are you sure you want to permanently clear all recorded violation records from the database?</p>
+                <div class="p-2 rounded bg-black border border-secondary text-warning small">
+                    <i class="bi bi-info-circle me-1"></i> Note: This only clears violation database logs. Machine Learning models, weights, and training datasets will NEVER be modified.
+                </div>
+            </div>
+            <div class="modal-footer mg-modal-footer">
+                <button type="button" class="btn btn-sm btn-mg-outline" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-sm btn-mg-danger" id="btnConfirmClearViolations">Permanently Clear</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    let currentPage = 1;
+    let totalPages = 1;
+
+    const tbody = document.getElementById("violationsTableBody");
+    const totalBadge = document.getElementById("totalRecordsBadge");
+    const paginationInfo = document.getElementById("paginationInfo");
+    const pageNumberDisplay = document.getElementById("pageNumberDisplay");
+    const btnPrev = document.getElementById("btnPrevPage");
+    const btnNext = document.getElementById("btnNextPage");
+
+    const searchViolation = document.getElementById("searchViolation");
+    const filterPPE = document.getElementById("filterPPE");
+    const filterDateFrom = document.getElementById("filterDateFrom");
+    const filterDateTo = document.getElementById("filterDateTo");
+    const btnApply = document.getElementById("btnApplyFilter");
+    const btnReset = document.getElementById("btnResetFilter");
+    const btnRefresh = document.getElementById("btnRefreshViolations");
+    const btnExportCsv = document.getElementById("btnExportViolationsCsv");
+    const btnConfirmClear = document.getElementById("btnConfirmClearViolations");
+
+    const evidenceModal = new bootstrap.Modal(document.getElementById("evidenceModal"));
+    const modalVioId = document.getElementById("modalVioId");
+    const modalInspRef = document.getElementById("modalInspRef");
+    const modalMeta = document.getElementById("modalMeta");
+    const evidenceAnnotatedImg = document.getElementById("evidenceAnnotatedImg");
+    const evidenceOriginalImg = document.getElementById("evidenceOriginalImg");
+
+    function formatImgUrl(path) {
+        if (!path) return "";
+        const parts = path.replace(/\\/g, "/").split("/");
+        const dateFolder = parts[parts.length - 2];
+        const filename = parts[parts.length - 1];
+        return `/evidence/${dateFolder}/${filename}`;
+    }
+
+    async function fetchViolations(page = 1) {
+        let url = `/api/violations?page=${page}&per_page=15`;
+        if (filterPPE && filterPPE.value !== "ALL") url += `&missing_ppe=${encodeURIComponent(filterPPE.value)}`;
+        if (filterDateFrom && filterDateFrom.value) url += `&date_from=${encodeURIComponent(filterDateFrom.value)}`;
+        if (filterDateTo && filterDateTo.value) url += `&date_to=${encodeURIComponent(filterDateTo.value)}`;
+        if (searchViolation && searchViolation.value.trim()) url += `&search=${encodeURIComponent(searchViolation.value.trim())}`;
+
+        try {
+            const res = await fetch(url);
+            if (res.ok) {
+                const data = await res.json();
+                currentPage = data.page;
+                totalPages = data.pages || 1;
+                renderViolations(data.violations || [], data.total || 0);
+            }
+        } catch (e) {
+            console.error("Failed to load violations:", e);
+        }
+    }
+
+    function renderViolations(records, total) {
+        totalBadge.textContent = `${total} Violations`;
+        paginationInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+        pageNumberDisplay.textContent = `Page ${currentPage}`;
+
+        btnPrev.disabled = (currentPage <= 1);
+        btnNext.disabled = (currentPage >= totalPages);
+
+        if (records.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="text-center text-muted py-5">
+                        <i class="bi bi-shield-check fs-2 d-block mb-2 text-success"></i>
+                        <div>No confirmed safety violations match the criteria</div>
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        let html = "";
+        records.forEach(r => {
+            const confPct = Math.round((r.confidence || 0) * 100);
+            const annUrl = formatImgUrl(r.annotated_image_path);
+            const origUrl = formatImgUrl(r.original_image_path);
+
+            html += `
+                <tr>
+                    <td><span class="badge bg-dark border border-danger text-danger">${r.violation_id}</span></td>
+                    <td><span class="font-monospace text-warning fw-bold small">${r.inspection_reference_id || "--"}</span></td>
+                    <td class="text-secondary small">${r.timestamp}</td>
+                    <td><span class="badge-violation">${r.missing_ppe}</span></td>
+                    <td><span class="text-cyan small fw-bold">${confPct}%</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-mg-outline py-0 px-2 btn-view-evidence"
+                            data-vio-id="${r.violation_id}"
+                            data-ref-id="${r.inspection_reference_id || ''}"
+                            data-ppe="${r.missing_ppe}"
+                            data-conf="${confPct}"
+                            data-time="${r.timestamp}"
+                            data-ann="${annUrl}"
+                            data-orig="${origUrl}">
+                            <i class="bi bi-images text-warning me-1"></i> Dual View
+                        </button>
+                    </td>
+                    <td class="text-end">
+                        <button class="btn btn-sm btn-mg-outline py-0 px-2 text-danger btn-delete-vio" data-id="${r.id}" title="Delete Record">
+                            <i class="bi bi-trash3"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        tbody.innerHTML = html;
+
+        // Attach listeners
+        document.querySelectorAll(".btn-view-evidence").forEach(btn => {
+            btn.addEventListener("click", () => {
+                modalVioId.textContent = btn.getAttribute("data-vio-id");
+                modalInspRef.textContent = `Ref: ${btn.getAttribute("data-ref-id")}`;
+                modalMeta.innerHTML = `
+                    <div><strong>Missing PPE:</strong> <span class="text-danger">${btn.getAttribute("data-ppe")}</span></div>
+                    <div><strong>Logged:</strong> ${btn.getAttribute("data-time")} | <strong>Confidence:</strong> ${btn.getAttribute("data-conf")}%</div>
+                `;
+                evidenceAnnotatedImg.src = btn.getAttribute("data-ann") || "";
+                evidenceOriginalImg.src = btn.getAttribute("data-orig") || "";
+                evidenceModal.show();
+            });
+        });
+
+        document.querySelectorAll(".btn-delete-vio").forEach(btn => {
+            btn.addEventListener("click", async () => {
+                const id = btn.getAttribute("data-id");
+                if (confirm(`Delete violation record #${id}?`)) {
+                    const res = await fetch(`/api/violations/${id}`, { method: "DELETE" });
+                    if (res.ok) fetchViolations(currentPage);
+                }
+            });
+        });
+    }
+
+    // Export CSV
+    btnExportCsv.addEventListener("click", () => {
+        let url = `/api/export/violations`;
+        const params = [];
+        if (filterPPE.value !== "ALL") params.push(`missing_ppe=${encodeURIComponent(filterPPE.value)}`);
+        if (filterDateFrom.value) params.push(`date_from=${encodeURIComponent(filterDateFrom.value)}`);
+        if (filterDateTo.value) params.push(`date_to=${encodeURIComponent(filterDateTo.value)}`);
+        if (params.length > 0) url += `?${params.join("&")}`;
+        window.location.href = url;
+    });
+
+    // Clear Violations
+    btnConfirmClear.addEventListener("click", async () => {
+        try {
+            const res = await fetch("/api/history/clear?target=violations", { method: "POST" });
+            if (res.ok) {
+                bootstrap.Modal.getInstance(document.getElementById("confirmClearModal")).hide();
+                fetchViolations(1);
+            }
+        } catch (e) { alert("Failed to clear violations"); }
+    });
+
+    // Filters
+    btnApply.addEventListener("click", () => fetchViolations(1));
+    btnReset.addEventListener("click", () => {
+        searchViolation.value = "";
+        filterPPE.value = "ALL";
+        filterDateFrom.value = "";
+        filterDateTo.value = "";
+        fetchViolations(1);
+    });
+    btnRefresh.addEventListener("click", () => fetchViolations(currentPage));
+    btnPrev.addEventListener("click", () => { if (currentPage > 1) fetchViolations(currentPage - 1); });
+    btnNext.addEventListener("click", () => { if (currentPage < totalPages) fetchViolations(currentPage + 1); });
+
+    // Initial load
+    fetchViolations(1);
+});
+</script>
+{% endblock %}
